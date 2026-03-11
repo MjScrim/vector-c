@@ -57,9 +57,37 @@ void vector_remove(struct Vector *v, size_t index) {
   memmove(
     vector_ptr(v ,index)
     ,vector_ptr(v, index + 1),
-    n);
+    n
+  );
 
   v->size--;
+}
+
+void vector_insert(struct Vector* v, void* value, size_t index) {
+  if (index > v->size) return;
+
+  if (v->size == v->capacity) {
+    size_t new_capacity = 2 * v->capacity;
+
+    void* temp = realloc(v->data, new_capacity * v->element_size);
+
+    if (!temp) return;
+
+    v->data = temp;
+    v->capacity = new_capacity;
+  }  
+
+  size_t n = (v->size - index) * v->element_size; 
+
+  memmove(
+    vector_ptr(v,index + 1),
+    vector_ptr(v, index),
+    n
+  );
+
+  memcpy(vector_ptr(v, index), value, v->element_size);
+
+  v->size++;
 }
 
 void vector_pop(struct Vector *v) {
@@ -72,7 +100,7 @@ void vector_reserve(struct Vector *v, size_t new_capacity) {
 
   void* temp = realloc(v->data, new_capacity * v->element_size);
 
-  if(!temp) return;
+  if (!temp) return;
 
   v->data = temp;
   v->capacity = new_capacity;

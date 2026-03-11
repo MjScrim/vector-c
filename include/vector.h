@@ -17,7 +17,7 @@ void vector_push(struct Vector* v, void* value);
 
 void vector_remove(struct Vector* v, size_t index);
 
-void vector_insert(struct Vector* v, size_t index);
+void vector_insert(struct Vector* v, void* value, size_t index);
 
 void vector_pop(struct Vector* v);
 

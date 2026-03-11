@@ -10,7 +10,7 @@ internally.
 
 - Generic storage using `void*`
 - Automatic resizing
-- Push and pop operations
+- Push, pop and reserve operations
 - Remove elements by index
 - Custom element printing via function pointers
 
