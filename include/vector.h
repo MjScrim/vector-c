@@ -1,0 +1,32 @@
+#ifndef VECTOR_H
+#define VECTOR_H
+
+#include <stdlib.h>
+#include <stdio.h>
+
+struct Vector {
+  void* data;
+  size_t capacity;
+  size_t size;
+  size_t element_size;
+};
+
+void vector_init(struct Vector* v, size_t capacity, size_t element_size);
+
+void vector_push(struct Vector* v, void* value);
+
+void vector_remove(struct Vector* v, size_t index);
+
+void vector_pop(struct Vector* v);
+
+void vector_reserve(struct Vector* v, size_t new_capacity);
+
+void* vector_ptr(struct Vector* v, size_t index);
+
+void* vector_at(struct Vector *v, size_t index);
+
+void vector_free(struct Vector *v);
+
+void vector_print(struct Vector *v, void (*print_fn)(void*));
+
+#endif
