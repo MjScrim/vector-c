@@ -24,14 +24,13 @@ vector_init(&v, 2, sizeof(int));
 int a = 10;
 int b = 20;
 int c = 30;
+int d = 15;
 
 vector_push(&v, &a);
 vector_push(&v, &b);
 vector_push(&v, &c);
 
-vector_print(&v, print_int);
-
-vector_remove(&v, 2);
+vector_insert(&v, &d, 1);
 
 vector_print(&v, print_int);
 
