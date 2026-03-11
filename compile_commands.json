@@ -1,0 +1,36 @@
+[
+  {
+    "file": "src/vector.c",
+    "arguments": [
+      "gcc",
+      "-Wall",
+      "-Wextra",
+      "-Werror",
+      "-std=c11",
+      "-g",
+      "-I./include",
+      "src/vector.c",
+      "-o",
+      "build/main"
+    ],
+    "directory": "/home/scrim/Projects/estudo/vector-c",
+    "output": "build/main"
+  },
+  {
+    "file": "examples/main.c",
+    "arguments": [
+      "gcc",
+      "-Wall",
+      "-Wextra",
+      "-Werror",
+      "-std=c11",
+      "-g",
+      "-I./include",
+      "examples/main.c",
+      "-o",
+      "build/main"
+    ],
+    "directory": "/home/scrim/Projects/estudo/vector-c",
+    "output": "build/main"
+  }
+]
