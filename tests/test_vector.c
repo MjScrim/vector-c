@@ -1,10 +1,12 @@
 #include <assert.h>
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include "vector.h"
 
 static void assert_int(struct Vector* v, size_t index, int expected);
 static void assert_char(struct Vector* v, size_t index, char expected);
+static bool compare_int(void* element, void* target);
 
 /* === Element Acess Tests ================================================= */
 void test_vector_get() {
@@ -69,6 +71,32 @@ void test_end() {
 
   char* expected_end_address = (char*)v.data + (v.size * v.element_size);
   assert(end == expected_end_address);
+
+  vector_free(&v);
+}
+
+void test_find() {
+  struct Vector v;
+  vector_init(&v, 1, sizeof(int));
+
+  int a = 10, b = 20, c = 30;
+
+  vector_push(&v, &a);
+  vector_push(&v, &b);
+  vector_push(&v, &c);
+
+  void* src = vector_find(&v, &b, compare_int);
+
+  assert(src != NULL);
+
+  int value = *(int*)src;
+
+  assert(value == b);
+
+  assert(src == vector_at(&v, 1));
+
+  int d = 99;
+  assert(vector_find(&v, &d, compare_int) == NULL);
 
   vector_free(&v);
 }
@@ -258,4 +286,8 @@ static void assert_char(struct Vector* v, size_t index, char expected) {
   const char* n = vector_at(v, index);
   assert(n != NULL);
   assert(*n == expected);
+}
+
+static bool compare_int(void* element, void* target) {
+  return *(int*)element == *(int*)target;
 }

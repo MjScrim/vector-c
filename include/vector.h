@@ -1,6 +1,7 @@
 #ifndef VECTOR_H
 #define VECTOR_H
 
+#include <stdbool.h>
 #include <stdlib.h>
 #include <stdio.h>
 
@@ -29,6 +30,7 @@ const void* vector_at(struct Vector* v, size_t index);
 void vector_get(struct Vector* v, size_t index, void* dest);
 void* vector_begin(struct Vector* v);
 void* vector_end(struct Vector* v);
+void* vector_find(struct Vector* v, void* target, bool (*compare)(void*, void*));
 
 /* =========================
    Modifiers

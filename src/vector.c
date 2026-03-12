@@ -1,4 +1,5 @@
 #include "vector.h"
+#include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -73,6 +74,21 @@ void* vector_begin(struct Vector* v) {
 
 void* vector_end(struct Vector* v) {
   return vector_ptr(v, v->size);
+}
+
+void* vector_find(struct Vector* v, void* target, bool (*compare)(void*, void*)) {
+  char* it = vector_begin(v);
+  char* end = vector_end(v);
+
+  while (it != end) {
+    if (compare(it, target)) {
+      return it;
+    }
+
+    it += v->element_size;
+  }
+
+  return NULL;
 }
 
 /* === Modifiers ================================================= */
