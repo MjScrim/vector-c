@@ -28,8 +28,29 @@ void test_push() {
   vector_free(&v);
 }
 
+void test_remove() {
+  struct Vector v;
+  vector_init(&v, 3, sizeof(int));
+
+  int a = 12, b = 13, c = 14;
+
+  vector_push(&v, &a);
+  vector_push(&v, &b);
+  vector_push(&v, &c);
+
+  vector_remove(&v, 1);
+
+  assert(v.size == 2);
+
+  assert_int(&v, 0, 12);
+  assert_int(&v, 1, 14);
+
+  vector_free(&v);
+}
+
 int main() {
   test_push();
+  test_remove();
 
   return 0;
 }
