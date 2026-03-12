@@ -91,6 +91,16 @@ void* vector_find(struct Vector* v, void* target, bool (*compare)(void*, void*))
   return NULL;
 }
 
+void vector_foreach(struct Vector* v, void (*action)(void*)) {
+  char* it = vector_begin(v);
+  char* end = vector_end(v);
+
+  while (it != end) {
+    action(it);
+    it += v->element_size;
+  }
+}
+
 /* === Modifiers ================================================= */
 void vector_push(struct Vector* v, void* value) {
   vector_grow_if_needed(v); 

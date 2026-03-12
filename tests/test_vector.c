@@ -7,6 +7,7 @@
 static void assert_int(struct Vector* v, size_t index, int expected);
 static void assert_char(struct Vector* v, size_t index, char expected);
 static bool compare_int(void* element, void* target);
+static void double_value(void* n);
 
 /* === Element Acess Tests ================================================= */
 void test_vector_get() {
@@ -97,6 +98,27 @@ void test_find() {
 
   int d = 99;
   assert(vector_find(&v, &d, compare_int) == NULL);
+
+  vector_free(&v);
+}
+
+void test_foreach() {
+  struct Vector v;
+  vector_init(&v, 1, sizeof(int));
+
+  int a = 2, b = 3, c = 4, d = 6, e = 7;
+
+  vector_push(&v, &a);
+  vector_push(&v, &b);
+  vector_push(&v, &c);
+  vector_push(&v, &d);
+  vector_push(&v, &e);
+
+  vector_foreach(&v, double_value);
+
+  assert_int(&v,0, a * 2);
+  assert_int(&v, 1, b * 2);
+  assert_int(&v, 2, c * 2);
 
   vector_free(&v);
 }
@@ -290,4 +312,9 @@ static void assert_char(struct Vector* v, size_t index, char expected) {
 
 static bool compare_int(void* element, void* target) {
   return *(int*)element == *(int*)target;
+}
+
+static void double_value(void* n) {
+  int* ptr = (int*)n;
+  *ptr = (*ptr) * 2;
 }

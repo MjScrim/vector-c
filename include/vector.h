@@ -31,6 +31,7 @@ void vector_get(struct Vector* v, size_t index, void* dest);
 void* vector_begin(struct Vector* v);
 void* vector_end(struct Vector* v);
 void* vector_find(struct Vector* v, void* target, bool (*compare)(void*, void*));
+void vector_foreach(struct Vector* v, void (*action)(void*));
 
 /* =========================
    Modifiers
