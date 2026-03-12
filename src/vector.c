@@ -2,6 +2,9 @@
 #include <stdlib.h>
 #include <string.h>
 
+static void vector_grow_if_needed(struct Vector *v);
+
+/* === Lifecycle ================================================= */
 void vector_init(struct Vector *v, size_t capacity, size_t element_size) {
   if (capacity == 0) capacity = 1; 
 
@@ -27,19 +30,61 @@ void vector_init(struct Vector *v, size_t capacity, size_t element_size) {
   v->size = 0;
 }
 
+void vector_free(struct Vector *v) {
+  free(v->data);
+
+  v->data = NULL;
+  v->size = 0;
+  v->capacity = 0;
+  v->element_size = 0;
+}
+
+/* === Capacity ================================================= */
+void vector_reserve(struct Vector *v, size_t new_capacity) {
+  if (new_capacity <= v->capacity) return;
+
+  void* temp = realloc(v->data, new_capacity * v->element_size);
+
+  if (!temp) return;
+
+  v->data = temp;
+  v->capacity = new_capacity;
+}
+
+/* === Element acess ================================================= */
+void* vector_ptr(struct Vector* v, size_t index) {
+  return (char*)v->data + index * v->element_size;
+}
+
+const void* vector_at(struct Vector *v, size_t index) {
+  if (index >= v->size) return NULL;
+
+  return (const char*)v->data + index * v->element_size;
+}
+
+/* === Modifiers ================================================= */
 void vector_push(struct Vector *v, void* value) {
-  if (v->size == v->capacity) {
-    size_t new_capacity = 2 * v->capacity;
-
-    void* temp = realloc(v->data, new_capacity * v->element_size);
-
-    if (!temp) return;
-
-    v->data = temp;
-    v->capacity = new_capacity;
-  }   
+  vector_grow_if_needed(v); 
 
   memcpy(vector_ptr(v, v->size), value, v->element_size);
+
+  v->size++;
+}
+
+void vector_insert(struct Vector* v, void* value, size_t index) {
+  if (index > v->size) return;
+
+   vector_grow_if_needed(v);
+
+  size_t n = (v->size - index) * v->element_size; 
+
+  memmove(
+    vector_ptr(v,index + 1),
+    vector_ptr(v, index),
+    n
+  );
+
+  memcpy(vector_ptr(v, index), value, v->element_size);
 
   v->size++;
 }
@@ -63,9 +108,28 @@ void vector_remove(struct Vector *v, size_t index) {
   v->size--;
 }
 
-void vector_insert(struct Vector* v, void* value, size_t index) {
-  if (index > v->size) return;
+void vector_pop(struct Vector *v) {
+  if (v->size == 0) return;
+  v->size--;
+}
 
+/* === Utils ================================================= */
+void vector_print(struct Vector *v, void (*print_fn)(const void*)) {
+  if (!print_fn) return;
+
+  for (size_t i = 0; i < v->size; i++) {
+    const void* element = vector_at(v, i);
+
+    print_fn(element);
+
+    printf(" ");
+  }
+
+  printf("\n");
+}
+
+/* === Static intern ================================================= */
+static void vector_grow_if_needed(struct Vector *v) {
   if (v->size == v->capacity) {
     size_t new_capacity = 2 * v->capacity;
 
@@ -75,62 +139,5 @@ void vector_insert(struct Vector* v, void* value, size_t index) {
 
     v->data = temp;
     v->capacity = new_capacity;
-  }  
-
-  size_t n = (v->size - index) * v->element_size; 
-
-  memmove(
-    vector_ptr(v,index + 1),
-    vector_ptr(v, index),
-    n
-  );
-
-  memcpy(vector_ptr(v, index), value, v->element_size);
-
-  v->size++;
-}
-
-void vector_pop(struct Vector *v) {
-  if (v->size == 0) return;
-  v->size--;
-}
-
-void vector_reserve(struct Vector *v, size_t new_capacity) {
-  if (new_capacity <= v->capacity) return;
-
-  void* temp = realloc(v->data, new_capacity * v->element_size);
-
-  if (!temp) return;
-
-  v->data = temp;
-  v->capacity = new_capacity;
-}
-
-void* vector_ptr(struct Vector* v, size_t index) {
-  return (char*)v->data + index * v->element_size;
-}
-
-void* vector_at(struct Vector *v, size_t index) {
-  if (index >= v->size) return NULL;
-
-  return (char*)v->data + index * v->element_size;
-}
-
-void vector_free(struct Vector *v) {
-  free(v->data);
-
-  v->data = NULL;
-  v->size = 0;
-  v->capacity = 0;
-  v->element_size = 0;
-}
-
-void vector_print(struct Vector *v, void (*print_fn)(void*)) {
-  for (size_t i = 0; i < v->size; i++) {
-    void* element = vector_at(v, i);
-
-    print_fn(element);
-  }
-
-  printf("\n");
+  } 
 }

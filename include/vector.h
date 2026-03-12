@@ -11,24 +11,34 @@ struct Vector {
   size_t element_size;
 };
 
+/* =========================
+   Lifecycle
+   ========================= */
 void vector_init(struct Vector* v, size_t capacity, size_t element_size);
-
-void vector_push(struct Vector* v, void* value);
-
-void vector_remove(struct Vector* v, size_t index);
-
-void vector_insert(struct Vector* v, void* value, size_t index);
-
-void vector_pop(struct Vector* v);
-
-void vector_reserve(struct Vector* v, size_t new_capacity);
-
-void* vector_ptr(struct Vector* v, size_t index);
-
-void* vector_at(struct Vector *v, size_t index);
-
 void vector_free(struct Vector *v);
 
-void vector_print(struct Vector *v, void (*print_fn)(void*));
+/* =========================
+   capacity
+   ========================= */
+void vector_reserve(struct Vector* v, size_t new_capacity);
+
+/* =========================
+   Element acess
+   ========================= */
+void* vector_ptr(struct Vector* v, size_t index);
+const void* vector_at(struct Vector *v, size_t index);
+
+/* =========================
+   Modifiers
+   ========================= */
+void vector_push(struct Vector* v, void* value);
+void vector_insert(struct Vector* v, void* value, size_t index);
+void vector_remove(struct Vector* v, size_t index);
+void vector_pop(struct Vector* v);
+
+/* =========================
+   Utils
+   ========================= */
+void vector_print(struct Vector *v, void (*print_fn)(const void*));
 
 #endif
