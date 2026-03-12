@@ -51,23 +51,6 @@ void test_push() {
   vector_free(&v);
 }
 
-void test_pop() {
-  struct Vector v;
-  vector_init(&v, 2, sizeof(int));
-
-  int a = 10, b = 20;
-
-  vector_push(&v, &a);
-  vector_push(&v, &b);
-
-  vector_pop(&v);
-
-  assert(v.size == 1);
-  assert_int(&v, 0, 10);
-
-  vector_free(&v);
-}
-
 void test_remove() {
   struct Vector v;
   vector_init(&v, 3, sizeof(int));
@@ -84,6 +67,26 @@ void test_remove() {
 
   assert_int(&v, 0, 12);
   assert_int(&v, 1, 14);
+
+  vector_free(&v);
+}
+
+void test_remove_first_and_last() {
+  struct Vector v;
+  vector_init(&v, 2, sizeof(char));
+  
+  char a = 'a', b = 's', c = 'd';
+
+  vector_push(&v, &a);
+  vector_push(&v, &b);
+  vector_push(&v, &c);
+
+  vector_remove(&v, 0);
+  //0 -> removed, last element back 1 index. 2 - 1 = 1.
+  vector_remove(&v, 1);
+ 
+  assert(v.size == 1); 
+  assert_char(&v, 0, b);
 
   vector_free(&v);
 }
@@ -108,22 +111,37 @@ void insert_test() {
   vector_free(&v);
 }
 
-void test_remove_first_and_last() {
+void test_pop() {
   struct Vector v;
-  vector_init(&v, 2, sizeof(char));
-  
-  char a = 'a', b = 's', c = 'd';
+  vector_init(&v, 2, sizeof(int));
+
+  int a = 10, b = 20;
+
+  vector_push(&v, &a);
+  vector_push(&v, &b);
+
+  vector_pop(&v);
+
+  assert(v.size == 1);
+  assert_int(&v, 0, 10);
+
+  vector_free(&v);
+}
+
+void test_set() {
+  struct Vector v;
+  vector_init(&v, 1, sizeof(char));
+
+  char a = 'f', b = 'g', c = 'h', d = 'j';
 
   vector_push(&v, &a);
   vector_push(&v, &b);
   vector_push(&v, &c);
 
-  vector_remove(&v, 0);
-  //0 -> removed, last element back 1 index. 2 - 1 = 1.
-  vector_remove(&v, 1);
- 
-  assert(v.size == 1); 
-  assert_char(&v, 0, b);
+  vector_set(&v, 1, &d);
+
+  assert(v.size == 3);
+  assert(*(char*)vector_at(&v, 1) == d);
 
   vector_free(&v);
 }
@@ -171,9 +189,10 @@ int main() {
   //Modifiers
   test_push();
   test_remove();
-  test_pop();
-  insert_test();
   test_remove_first_and_last();
+  insert_test();
+  test_pop();
+  test_set();
 
   //Stress
   test_push_stress();

@@ -118,6 +118,12 @@ void vector_pop(struct Vector* v) {
   v->size--;
 }
 
+void vector_set(struct Vector *v, size_t index, void *value) {
+  if (index >= v->size) return;
+
+  memcpy(vector_ptr(v, index), value, v->element_size);
+}
+
 /* === Utils ================================================= */
 void vector_print(struct Vector* v, void (*print_fn)(const void*)) {
   if (!print_fn) return;
