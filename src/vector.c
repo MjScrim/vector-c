@@ -147,6 +147,27 @@ void vector_remove(struct Vector* v, size_t index) {
   v->size--;
 }
 
+void vector_remove_range(struct Vector *v, size_t start_index, size_t count) {
+  if (start_index >= v->size || count == 0) return;
+
+  if (start_index + count > v->size) {
+    count = v->size - start_index;
+  }
+
+  size_t elements_to_moive = v->size - (start_index + count);
+
+  if (elements_to_moive > 0) {
+    size_t n = elements_to_moive * v->element_size;
+    memmove(
+      vector_ptr(v, start_index),
+      vector_ptr(v, start_index + count),
+      n
+    );
+  }
+
+  v->size -= count;
+}
+
 void vector_pop(struct Vector* v) {
   if (v->size == 0) return;
   v->size--;

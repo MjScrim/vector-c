@@ -41,6 +41,7 @@ void vector_insert(struct Vector* v, void* value, size_t index);
 void vector_remove(struct Vector* v, size_t index);
 void vector_pop(struct Vector* v);
 void vector_set(struct Vector* v, size_t index, void* value);
+void vector_remove_range(struct Vector*v , size_t start_index, size_t count);
 
 /* =========================
    Utils
