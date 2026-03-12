@@ -2,6 +2,7 @@ CC = gcc
 
 CFLAGS = -Wall -Wextra -Werror -std=c11 -g
 INCLUDES = -I./include
+FLAG_TEST = -fsanitize=address
 
 SRC = src/vector.c examples/main.c
 SRC_TEST = src/*c
@@ -18,7 +19,7 @@ run: all
 	./$(TARGET)
 
 test:
-	$(CC) $(INCLUDES) $(SRC_TEST) $(TEST) -o $(TARGET_TEST)
+	$(CC) $(FLAG_TEST) $(INCLUDES) $(SRC_TEST) $(TEST) -o $(TARGET_TEST)
 	./$(TARGET_TEST)
 
 clean:
