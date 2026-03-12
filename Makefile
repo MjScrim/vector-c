@@ -5,7 +5,7 @@ INCLUDES = -I./include
 
 SRC = src/vector.c examples/main.c
 SRC_TEST = src/*c
-TEST = tests/test_vector_modifiers.c
+TEST = tests/test_vector.c
 
 TARGET = build/main
 TARGET_TEST = build/test

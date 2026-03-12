@@ -3,6 +3,7 @@
 #include "vector.h"
 
 static void assert_int(struct Vector* v, size_t index, int expected);
+static void assert_char(struct Vector* v, size_t index, char expected);
 
 /* === Modifieris Tests ================================================= */
 void test_push() {
@@ -62,16 +63,64 @@ void test_remove() {
   vector_free(&v);
 }
 
+void insert_test() {
+  struct Vector v;
+  vector_init(&v, 2, sizeof(char));
+  
+  char a = 'q', b = 'w', c = 'e', d = 'r', e = 't';
+
+  vector_insert(&v, &e, 0);
+
+  vector_push(&v, &a);
+  vector_push(&v, &b);
+  vector_push(&v, &c);
+
+  vector_insert(&v, &d, 1);
+
+  assert(v.size == 5);
+  assert_char(&v, 1, d);
+
+  vector_free(&v);
+}
+
+void test_remove_first_and_last() {
+  struct Vector v;
+  vector_init(&v, 2, sizeof(char));
+  
+  char a = 'a', b = 's', c = 'd';
+
+  vector_push(&v, &a);
+  vector_push(&v, &b);
+  vector_push(&v, &c);
+
+  vector_remove(&v, 0);
+  //0 -> removed, last element back 1 index. 2 - 1 = 1.
+  vector_remove(&v, 1);
+ 
+  assert(v.size == 1); 
+  assert_char(&v, 0, b);
+}
+
 int main() {
   test_push();
   test_remove();
   test_pop();
+  insert_test();
+  test_remove_first_and_last();
+
+  printf("All tests passed\n");
 
   return 0;
 }
 
 static void assert_int(struct Vector* v, size_t index, int expected) {
   const int* n = vector_at(v, index);
+  assert(n != NULL);
+  assert(*n == expected);
+}
+
+static void assert_char(struct Vector* v, size_t index, char expected) {
+  const char* n = vector_at(v, index);
   assert(n != NULL);
   assert(*n == expected);
 }
