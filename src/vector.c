@@ -159,17 +159,10 @@ void vector_set(struct Vector *v, size_t index, void *value) {
 }
 
 /* === Utils ================================================= */
-void vector_print(struct Vector* v, void (*print_fn)(const void*)) {
+void vector_print(struct Vector* v, void (*print_fn)(void*)) {
   if (!print_fn) return;
 
-  char* begin = (char*)vector_begin(v);
-  char* end = (char*)vector_end(v);
-
-  for (char* it = begin; it != end; it += v->element_size) { 
-    print_fn(it);
-
-    printf(" ");
-  }
+  vector_foreach(v, print_fn); 
 
   printf("\n");
 }

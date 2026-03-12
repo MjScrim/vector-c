@@ -1,6 +1,6 @@
 #include "vector.h"
 
-void print_int(const void *p) {
+void print_int(void *p) {
     int *x = (int*)p;
     printf("%d ", *x);
 }

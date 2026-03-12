@@ -45,6 +45,6 @@ void vector_set(struct Vector* v, size_t index, void* value);
 /* =========================
    Utils
    ========================= */
-void vector_print(struct Vector* v, void (*print_fn)(const void*));
+void vector_print(struct Vector* v, void (*print_fn)(void*));
 
 #endif
