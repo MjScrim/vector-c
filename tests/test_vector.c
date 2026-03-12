@@ -30,6 +30,49 @@ void test_vector_get() {
   vector_free(&v);
 }
 
+void test_begin() {
+  struct Vector v;
+  vector_init(&v, 1, sizeof(int));
+
+  int i = 1, o = 2, p = 3;
+
+  vector_push(&v, &i);
+  vector_push(&v, &o);
+  vector_push(&v, &p);
+
+  int begin = *(int*)vector_begin(&v);
+
+  assert(v.size == 3);
+  assert(begin == i);
+
+  vector_free(&v);
+}
+
+void test_end() {
+  struct Vector v;
+  vector_init(&v, 1, sizeof(char));
+
+  assert(vector_begin(&v) == vector_end(&v));
+
+  char a = 'a', b = 's', c = 'd';
+
+  vector_push(&v, &a);
+  vector_push(&v, &b);
+  vector_push(&v, &c);
+
+  char* begin = (char*)vector_begin(&v);
+  char* end = (char*)vector_end(&v);
+
+  size_t expected_distance_in_bytes = v.size * v.element_size;
+
+  assert((size_t)(end - begin) == expected_distance_in_bytes);
+
+  char* expected_end_address = (char*)v.data + (v.size * v.element_size);
+  assert(end == expected_end_address);
+
+  vector_free(&v);
+}
+
 /* === Modifiers Tests ================================================= */
 void test_push() {
   struct Vector v;
@@ -185,6 +228,8 @@ void test_random_operations() {
 int main() {
   //Element Acess
   test_vector_get();
+  test_begin();
+  test_end();
 
   //Modifiers
   test_push();
