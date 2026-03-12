@@ -1,26 +1,35 @@
 #include <assert.h>
+#include <stdio.h>
 #include "vector.h"
 
-int main() {
+static void assert_int(struct Vector* v, size_t index, int expected) {
+  const int* n = vector_at(v, index);
+  assert(n != NULL);
+  assert(*n == expected);
+}
+
+void test_push() {
   struct Vector v;
+  vector_init(&v, 2, sizeof(int));
 
-    vector_init(&v, 2, sizeof(int));
+  int a = 10, b = 20, c = 30;
 
-    int a = 10;
-    int b = 20;
+  vector_push(&v, &a);
+  vector_push(&v, &b);
+  vector_push(&v, &c);
 
-    vector_push(&v, &a);
-    vector_push(&v, &b);
+  assert(v.size == 3);
+  assert(v.capacity == 4);
 
-    const int *x = vector_at(&v, 0);
-    const int *y = vector_at(&v, 1);
+  assert_int(&v, 0, 10);
+  assert_int(&v, 1, 20);
+  assert_int(&v, 2, 30);
 
-    assert(*x == 10);
-    assert(*y == 20);
+  vector_free(&v);
+}
 
-    assert(v.size == 2);
+int main() {
+  test_push();
 
-    vector_free(&v);
-
-    return 0;
+  return 0;
 }
