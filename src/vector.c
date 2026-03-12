@@ -67,6 +67,14 @@ void vector_get(struct Vector* v, size_t index, void* dest) {
   memcpy(dest, src, v->element_size);
 }
 
+void* vector_begin(struct Vector* v) {
+  return v->data;
+}
+
+void* vector_end(struct Vector* v) {
+  return vector_ptr(v, v->size);
+}
+
 /* === Modifiers ================================================= */
 void vector_push(struct Vector* v, void* value) {
   vector_grow_if_needed(v); 
@@ -128,10 +136,11 @@ void vector_set(struct Vector *v, size_t index, void *value) {
 void vector_print(struct Vector* v, void (*print_fn)(const void*)) {
   if (!print_fn) return;
 
-  for (size_t i = 0; i < v->size; i++) {
-    const void* element = vector_at(v, i);
+  char* begin = (char*)vector_begin(v);
+  char* end = (char*)vector_end(v);
 
-    print_fn(element);
+  for (char* it = begin; it != end; it += v->element_size) { 
+    print_fn(it);
 
     printf(" ");
   }

@@ -27,6 +27,8 @@ void vector_reserve(struct Vector* v, size_t new_capacity);
    ========================= */
 const void* vector_at(struct Vector* v, size_t index);
 void vector_get(struct Vector* v, size_t index, void* dest);
+void* vector_begin(struct Vector* v);
+void* vector_end(struct Vector* v);
 
 /* =========================
    Modifiers
