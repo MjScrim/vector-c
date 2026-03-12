@@ -1,9 +1,34 @@
 #include <assert.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include "vector.h"
 
 static void assert_int(struct Vector* v, size_t index, int expected);
 static void assert_char(struct Vector* v, size_t index, char expected);
+
+/* === Element Acess Tests ================================================= */
+void test_vector_get() {
+  struct Vector v;
+  vector_init(&v, 1, sizeof(char));
+
+  char a = 'a', b = 's', c = 'd';
+
+  vector_push(&v, &a);
+
+  char get_char;
+  vector_get(&v, 0, &get_char);
+
+  vector_push(&v, &b);
+  vector_push(&v, &c);
+
+  assert(v.size == 3);
+  assert(get_char == *(char*)vector_at(&v, 0));
+
+  assert(*(char*)vector_at(&v, 1) == 's');
+  assert(*(char*)vector_at(&v, 2) == 'd');
+  
+  vector_free(&v);
+}
 
 /* === Modifiers Tests ================================================= */
 void test_push() {
@@ -140,6 +165,9 @@ void test_random_operations() {
 }
 
 int main() {
+  //Element Acess
+  test_vector_get();
+
   //Modifiers
   test_push();
   test_remove();

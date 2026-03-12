@@ -41,7 +41,7 @@ void vector_free(struct Vector *v) {
 }
 
 /* === Capacity ================================================= */
-void vector_reserve(struct Vector *v, size_t new_capacity) {
+void vector_reserve(struct Vector* v, size_t new_capacity) {
   if (new_capacity <= v->capacity) return;
 
   void* temp = realloc(v->data, new_capacity * v->element_size);
@@ -53,14 +53,22 @@ void vector_reserve(struct Vector *v, size_t new_capacity) {
 }
 
 /* === Element acess ================================================= */
-const void* vector_at(struct Vector *v, size_t index) {
+const void* vector_at(struct Vector* v, size_t index) {
   if (index >= v->size) return NULL;
 
   return (const char*)v->data + index * v->element_size;
 }
 
+void vector_get(struct Vector* v, size_t index, void* dest) {
+  if (index >= v->size) return;
+
+  void* src = vector_ptr(v, index);
+
+  memcpy(dest, src, v->element_size);
+}
+
 /* === Modifiers ================================================= */
-void vector_push(struct Vector *v, void* value) {
+void vector_push(struct Vector* v, void* value) {
   vector_grow_if_needed(v); 
 
   memcpy(vector_ptr(v, v->size), value, v->element_size);
@@ -86,7 +94,7 @@ void vector_insert(struct Vector* v, void* value, size_t index) {
   v->size++;
 }
 
-void vector_remove(struct Vector *v, size_t index) {
+void vector_remove(struct Vector* v, size_t index) {
   if (index >= v->size) return;
 
   if (index == v->size - 1) {
@@ -105,13 +113,13 @@ void vector_remove(struct Vector *v, size_t index) {
   v->size--;
 }
 
-void vector_pop(struct Vector *v) {
+void vector_pop(struct Vector* v) {
   if (v->size == 0) return;
   v->size--;
 }
 
 /* === Utils ================================================= */
-void vector_print(struct Vector *v, void (*print_fn)(const void*)) {
+void vector_print(struct Vector* v, void (*print_fn)(const void*)) {
   if (!print_fn) return;
 
   for (size_t i = 0; i < v->size; i++) {
@@ -126,7 +134,7 @@ void vector_print(struct Vector *v, void (*print_fn)(const void*)) {
 }
 
 /* === Static intern ================================================= */
-static void vector_grow_if_needed(struct Vector *v) {
+static void vector_grow_if_needed(struct Vector* v) {
   if (v->size == v->capacity) {
     size_t new_capacity = 2 * v->capacity;
 
