@@ -25,7 +25,6 @@ void vector_reserve(struct Vector* v, size_t new_capacity);
 /* =========================
    Element acess
    ========================= */
-void* vector_ptr(struct Vector* v, size_t index);
 const void* vector_at(struct Vector *v, size_t index);
 
 /* =========================

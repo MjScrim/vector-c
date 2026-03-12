@@ -4,8 +4,11 @@ CFLAGS = -Wall -Wextra -Werror -std=c11 -g
 INCLUDES = -I./include
 
 SRC = src/vector.c examples/main.c
+SRC_TEST = src/*c
+TEST = tests/test_vector.c
 
 TARGET = build/main
+TARGET_TEST = build/test
 
 all:
 	mkdir -p build
@@ -13,6 +16,10 @@ all:
 
 run: all
 	./$(TARGET)
+
+test:
+	$(CC) $(INCLUDES) $(SRC_TEST) $(TEST) -o $(TARGET_TEST)
+	./$(TARGET_TEST)
 
 clean:
 	rm -rf build

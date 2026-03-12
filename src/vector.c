@@ -3,6 +3,7 @@
 #include <string.h>
 
 static void vector_grow_if_needed(struct Vector *v);
+static void* vector_ptr(struct Vector* v, size_t index);
 
 /* === Lifecycle ================================================= */
 void vector_init(struct Vector *v, size_t capacity, size_t element_size) {
@@ -52,10 +53,6 @@ void vector_reserve(struct Vector *v, size_t new_capacity) {
 }
 
 /* === Element acess ================================================= */
-void* vector_ptr(struct Vector* v, size_t index) {
-  return (char*)v->data + index * v->element_size;
-}
-
 const void* vector_at(struct Vector *v, size_t index) {
   if (index >= v->size) return NULL;
 
@@ -140,4 +137,8 @@ static void vector_grow_if_needed(struct Vector *v) {
     v->data = temp;
     v->capacity = new_capacity;
   } 
+}
+
+static void* vector_ptr(struct Vector* v, size_t index) {
+  return (char*)v->data + index * v->element_size;
 }
