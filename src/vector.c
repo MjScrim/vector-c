@@ -269,6 +269,12 @@ VectorStatus vector_set(struct Vector *v, size_t index, void *value) {
   return VECTOR_SUCCESS;
 }
 
+VectorStatus vector_clear(struct Vector* v) {
+  v->size = 0;
+
+  return VECTOR_SUCCESS;
+}
+
 /* === Utils ================================================= */
 VectorStatus vector_print(struct Vector* v, void (*print_fn)(void*)) {
   if (!v) return VECTOR_ERR_NULL_PTR;
@@ -285,7 +291,7 @@ VectorStatus vector_print(struct Vector* v, void (*print_fn)(void*)) {
 /* === Static intern ================================================= */
 static VectorStatus vector_grow_if_needed(struct Vector* v) {
   if (v->size == v->capacity) {
-    size_t new_capacity = 2 * v->capacity;
+    size_t new_capacity = v->capacity ? v->capacity * 2 : 1;
 
     void* temp = realloc(v->data, new_capacity * v->element_size);
 

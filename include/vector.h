@@ -50,7 +50,7 @@ VectorStatus vector_remove(struct Vector* v, size_t index);
 VectorStatus vector_remove_range(struct Vector*v , size_t start_index, size_t count);
 VectorStatus vector_pop(struct Vector* v);
 VectorStatus vector_set(struct Vector* v, size_t index, void* value);
-
+VectorStatus vector_clear(struct Vector* v);
 /* =========================
    Utils
    ========================= */

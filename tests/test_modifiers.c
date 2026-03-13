@@ -108,6 +108,17 @@ static void test_set() {
   ASSERT_OK(vector_free(&v));
 }
 
+static void test_clear() {
+  Vector v;
+  setup_char(&v);
+
+  ASSERT_OK(vector_clear(&v));
+
+  assert(v.size == 0);
+
+  ASSERT_OK(vector_free(&v));
+}
+
 void run_modifiers_tests() {
   test_push();
   test_remove();
@@ -116,4 +127,5 @@ void run_modifiers_tests() {
   test_insert();
   test_pop();
   test_set();
+  test_clear();
 }
