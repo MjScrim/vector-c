@@ -41,27 +41,30 @@ vector_free(&v);
 
 You can build this project using either **CMake** (recommended) or the provided **Makefile**.
 
-### Using CMake
+### Using CMake via Makefile script
 
 1. Generate the build directory:
    ```bash
-   cmake -B build
+   make setup
    ```
 2. Compile the project:
     ```bash
-   cmake --build build
+   make build-cmake
    ```
 3. Compile and run the compiled example:
     ```bash
-   cmake --build build --target run
+   make run-cmake
    ```
 4. Run tests:
     ```bash
-   cd build
-   ctest --output-on-failure
-   ```
+    make ctest
+    ```
+5. Build and run test:
+    ```bash
+    make check
+    ```
 
-### Using Makefile
+### Using only Makefile
 
 1. Compile the project:
    ```bash

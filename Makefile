@@ -18,6 +18,9 @@ setup:
 build-cmake:
 	$(CMAKE) --build build
 
+run-cmake:
+	$(CMAKE) --build build --target run
+
 ctest:
 	cd build && ctest --output-on-failure
 
