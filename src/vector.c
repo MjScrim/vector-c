@@ -3,7 +3,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-static void vector_grow_if_needed(struct Vector *v);
+static void vector_grow_if_needed(struct Vector* v);
+static void vector_shrink_if_needed(struct Vector* v);
 static void* vector_ptr(struct Vector* v, size_t index);
 
 /* === Lifecycle ================================================= */
@@ -51,6 +52,28 @@ void vector_reserve(struct Vector* v, size_t new_capacity) {
 
   v->data = temp;
   v->capacity = new_capacity;
+}
+
+void vector_shrink_to_fit(struct Vector* v) {
+  if (v->size == v->capacity) {
+    return;
+  }
+
+  if (v->size == 0) {
+    free(v->data);
+    v->data = NULL;
+    v->capacity = 0;
+    return;
+  }
+
+  size_t new_capacity_bytes = v->size * v->element_size;
+
+  void* new_data = realloc(v->data, new_capacity_bytes);
+
+  if (new_data != NULL) {
+    v->data = new_data;
+    v->capacity = v->size;
+  }
 }
 
 /* === Element acess ================================================= */
@@ -145,6 +168,8 @@ void vector_remove(struct Vector* v, size_t index) {
   );
 
   v->size--;
+
+  vector_shrink_if_needed(v);
 }
 
 void vector_remove_range(struct Vector *v, size_t start_index, size_t count) {
@@ -166,11 +191,15 @@ void vector_remove_range(struct Vector *v, size_t start_index, size_t count) {
   }
 
   v->size -= count;
+
+  vector_shrink_if_needed(v);
 }
 
 void vector_pop(struct Vector* v) {
   if (v->size == 0) return;
   v->size--;
+
+  vector_shrink_if_needed(v);
 }
 
 void vector_set(struct Vector *v, size_t index, void *value) {
@@ -200,6 +229,20 @@ static void vector_grow_if_needed(struct Vector* v) {
     v->data = temp;
     v->capacity = new_capacity;
   } 
+}
+
+static void vector_shrink_if_needed(struct Vector* v) {
+  if (v->capacity > 4 && v->capacity / 4) {
+    size_t new_capacity = v->capacity / 2;
+    size_t new_capacity_bytes = new_capacity * v->element_size;
+
+    void* new_data = realloc(v->data, new_capacity_bytes);
+
+    if (new_data != NULL) {
+      v->data = new_data;
+      v->capacity = new_capacity;
+    }
+  }
 }
 
 static void* vector_ptr(struct Vector* v, size_t index) {

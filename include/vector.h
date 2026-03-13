@@ -22,6 +22,7 @@ void vector_free(struct Vector* v);
    capacity
    ========================= */
 void vector_reserve(struct Vector* v, size_t new_capacity);
+void vector_shrink_to_fit(struct Vector* v);
 
 /* =========================
    Element acess
