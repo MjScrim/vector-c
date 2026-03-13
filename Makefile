@@ -1,4 +1,5 @@
 CC = gcc
+CMAKE = cmake
 
 CFLAGS = -Wall -Wextra -Werror -std=c11 -g
 INCLUDES = -I./include
@@ -10,6 +11,17 @@ TEST = tests/test_vector.c
 
 TARGET = build/main
 TARGET_TEST = build/test
+
+setup:
+	$(CMAKE) -S . -B build
+
+build-cmake:
+	$(CMAKE) --build build
+
+ctest:
+	cd build && ctest --output-on-failure
+
+check: build-cmake ctest
 
 all:
 	mkdir -p build

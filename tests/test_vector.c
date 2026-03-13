@@ -38,6 +38,32 @@ void test_reserve() {
   vector_free(&v);
 }
 
+void test_shrink_to_fit() {
+  struct Vector v;
+  setup_int(&v);
+
+  vector_shrink_to_fit(&v);
+
+  assert(v.capacity == v.size);
+
+  vector_free(&v);
+}
+
+void test_shrink_if_needed() {
+  struct Vector v;
+  setup_char(&v);
+
+  size_t new_capacity = 12;
+
+  vector_reserve(&v, new_capacity);
+
+  vector_pop(&v);
+
+  assert(v.capacity == new_capacity / 2);
+
+  vector_free(&v);
+}
+
 /* === Element Acess Tests ================================================= */
 void test_vector_get() {
   struct Vector v;
@@ -282,6 +308,8 @@ void test_random_operations() {
 int main() {
   //Capacity
   test_reserve(); 
+  test_shrink_to_fit();
+  test_shrink_if_needed();
 
   //Element Acess
   test_vector_get();
