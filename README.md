@@ -1,4 +1,5 @@
 # vector-c
+![Build and Test](https://github.com/MjScrim/vector-c/actions/workflows/ci.yml/badge.svg)
 
 A generic dynamic array (vector) implementation in C.
 
