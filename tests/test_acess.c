@@ -1,27 +1,24 @@
 #include "test_helpers.h"
 
-/* === Element Acess Tests ================================================= */
 static void test_vector_get() {
   Vector v;
   ASSERT_OK(vector_init(&v, 1, sizeof(char)));
 
-  char a = 'a', b = 's', c = 'd';
-
-  ASSERT_OK(vector_push(&v, &a));
+  ASSERT_OK(VECTOR_PUSH(&v, char, 'a'));
 
   char get_char;
-  ASSERT_OK(vector_get(&v, 0, &get_char));
+  ASSERT_OK(VECTOR_GET(&v, char, 0, &get_char));
 
-  ASSERT_OK(vector_push(&v, &b));
-  ASSERT_OK(vector_push(&v, &c));
+  ASSERT_OK(VECTOR_PUSH(&v, char, 's'));
+  ASSERT_OK(VECTOR_PUSH(&v, char, 'd'));
 
   assert(v.size == 3);
   
   assert(vector_at(&v, 0) != NULL);
-  assert(get_char == *(char*)vector_at(&v, 0));
+  assert(get_char == VECTOR_AT(&v, char, 0));
 
-  assert(*(char*)vector_at(&v, 1) == b);
-  assert(*(char*)vector_at(&v, 2) == c);
+  assert(VECTOR_AT(&v, char, 1) == 's');
+  assert(VECTOR_AT(&v, char, 2) == 'd');
   
   ASSERT_OK(vector_free(&v));
 }
@@ -31,7 +28,7 @@ static void test_begin() {
   setup_int(&v);
 
   void* ptr = vector_begin(&v);
-  assert(ptr != NULL); // Segurança extra!
+  assert(ptr != NULL);
   
   int begin = *(int*)ptr;
 
@@ -47,11 +44,9 @@ static void test_end() {
 
   assert(vector_begin(&v) == vector_end(&v));
 
-  char a = 'a', b = 'b', c = 'c';
-
-  ASSERT_OK(vector_push(&v, &a));
-  ASSERT_OK(vector_push(&v, &b));
-  ASSERT_OK(vector_push(&v, &c));
+  ASSERT_OK(VECTOR_PUSH(&v, char, 'a'));
+  ASSERT_OK(VECTOR_PUSH(&v, char, 'b'));
+  ASSERT_OK(VECTOR_PUSH(&v, char, 'c'));
 
   char* begin = (char*)vector_begin(&v);
   char* end = (char*)vector_end(&v);
@@ -70,19 +65,13 @@ static void test_find() {
   Vector v;
   setup_int(&v);
 
-  int b = 20; 
-
-  void* src = vector_find(&v, &b, compare_int);
+  int* src = VECTOR_FIND(&v, int, 20, compare_int);
 
   assert(src != NULL);
+  assert(*src == 20);
+  assert((void*)src == vector_at(&v, 1));
 
-  int value = *(int*)src;
-
-  assert(value == b);
-  assert(src == vector_at(&v, 1));
-
-  int d = 99;
-  assert(vector_find(&v, &d, compare_int) == NULL);
+  assert(VECTOR_FIND(&v, int, 99, compare_int) == NULL);
 
   ASSERT_OK(vector_free(&v));
 }
@@ -91,13 +80,11 @@ static void test_foreach() {
   Vector v;
   setup_int(&v);
 
-  int a = 10, b = 20, c = 30;
-
   ASSERT_OK(vector_foreach(&v, double_value));
 
-  assert_int(&v,0, a * 2);
-  assert_int(&v, 1, b * 2);
-  assert_int(&v, 2, c * 2);
+  assert_int(&v, 0, 20);
+  assert_int(&v, 1, 40);
+  assert_int(&v, 2, 60);
 
   ASSERT_OK(vector_free(&v));
 }

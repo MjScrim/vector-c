@@ -1,6 +1,5 @@
 #include "test_helpers.h"
 
-/* === Stress Tests ================================================= */
 static void test_push_stress() {
   Vector v;
   ASSERT_OK(vector_init(&v, 1, sizeof(int)));
@@ -8,7 +7,7 @@ static void test_push_stress() {
   int N = 100000;
 
   for (int i = 0; i < N; i++) {
-    ASSERT_OK(vector_push(&v, &i));
+    ASSERT_OK(VECTOR_PUSH(&v, int, i));
   }
 
   assert(v.size == (size_t)N);
@@ -25,12 +24,11 @@ static void test_random_operations() {
   ASSERT_OK(vector_init(&v, 2, sizeof(int)));
 
   for (int i = 0; i < 50000; i++) {
-    int value = i;
-    ASSERT_OK(vector_push(&v, &value));
+    ASSERT_OK(VECTOR_PUSH(&v, int, i));
 
-      if (i % 3 == 0 && v.size > 0) {
+    if (i % 3 == 0 && v.size > 0) {
       ASSERT_OK(vector_pop(&v));
-      }
+    }
   }
   
   ASSERT_OK(vector_free(&v));

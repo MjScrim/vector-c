@@ -1,11 +1,8 @@
 #include "test_helpers.h"
 
-/* === Capacity Tests ================================================= */
 static void test_reserve() {
   Vector v;
   setup_char(&v);
-
-  char a = 'a', b = 'b', c = 'c';
 
   size_t new_capacity = 10;
   size_t old_size = v.size;
@@ -15,12 +12,11 @@ static void test_reserve() {
   assert(v.capacity == new_capacity);
   assert(old_size == v.size);
 
-  assert_char(&v, 0, a);
-  assert_char(&v, 1, b);
-  assert_char(&v, 2, c);
+  assert_char(&v, 0, 'a');
+  assert_char(&v, 1, 'b');
+  assert_char(&v, 2, 'c');
 
-  char d = 'd';
-  ASSERT_OK(vector_push(&v, &d));
+  ASSERT_OK(VECTOR_PUSH(&v, char, 'd'));
   assert(v.size == 4);
   assert_char(&v, 3, 'd');
 
