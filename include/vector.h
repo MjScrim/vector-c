@@ -12,41 +12,48 @@ typedef struct Vector {
   size_t element_size;
 } Vector;
 
+typedef enum {
+  VECTOR_SUCCESS = 0,
+  VECTOR_ERR_NULL_PTR = 1,
+  VECTOR_ERR_OUT_OF_BOUNDS = -2,
+  VECTOR_ERR_ALLOC_FAILED = -3
+} VectorStatus;
+
 /* =========================
    Lifecycle
    ========================= */
-void vector_init(struct Vector* v, size_t capacity, size_t element_size);
-void vector_free(struct Vector* v);
+VectorStatus vector_init(struct Vector* v, size_t capacity, size_t element_size);
+VectorStatus vector_free(struct Vector* v);
 
 /* =========================
    capacity
    ========================= */
-void vector_reserve(struct Vector* v, size_t new_capacity);
-void vector_shrink_to_fit(struct Vector* v);
+VectorStatus vector_reserve(struct Vector* v, size_t new_capacity);
+VectorStatus vector_shrink_to_fit(struct Vector* v);
 
 /* =========================
    Element acess
    ========================= */
 const void* vector_at(struct Vector* v, size_t index);
-void vector_get(struct Vector* v, size_t index, void* dest);
+VectorStatus vector_get(struct Vector* v, size_t index, void* dest);
 void* vector_begin(struct Vector* v);
 void* vector_end(struct Vector* v);
 void* vector_find(struct Vector* v, void* target, bool (*compare)(void*, void*));
-void vector_foreach(struct Vector* v, void (*action)(void*));
+VectorStatus vector_foreach(struct Vector* v, void (*action)(void*));
 
 /* =========================
    Modifiers
    ========================= */
-void vector_push(struct Vector* v, void* value);
-void vector_insert(struct Vector* v, void* value, size_t index);
-void vector_remove(struct Vector* v, size_t index);
-void vector_pop(struct Vector* v);
-void vector_set(struct Vector* v, size_t index, void* value);
-void vector_remove_range(struct Vector*v , size_t start_index, size_t count);
+VectorStatus vector_push(struct Vector* v, void* value);
+VectorStatus vector_insert(struct Vector* v, void* value, size_t index);
+VectorStatus vector_remove(struct Vector* v, size_t index);
+VectorStatus vector_remove_range(struct Vector*v , size_t start_index, size_t count);
+VectorStatus vector_pop(struct Vector* v);
+VectorStatus vector_set(struct Vector* v, size_t index, void* value);
 
 /* =========================
    Utils
    ========================= */
-void vector_print(struct Vector* v, void (*print_fn)(void*));
+VectorStatus vector_print(struct Vector* v, void (*print_fn)(void*));
 
 #endif

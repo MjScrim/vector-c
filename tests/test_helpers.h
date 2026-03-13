@@ -6,6 +6,12 @@
 #include <stdio.h>
 #include "vector.h"
 
+#define ASSERT_OK(func) \
+    do { \
+        VectorStatus status_ = (func); \
+        assert(status_ == VECTOR_SUCCESS); \
+    } while (0)
+
 void setup_int(Vector* v);
 void setup_char(Vector* v);
 void assert_int(Vector* v, size_t index, int expected);

@@ -1,23 +1,23 @@
 #include "test_helpers.h"
 
 void setup_int(Vector* v) {
-  vector_init(v, 1, sizeof(int));
+  ASSERT_OK(vector_init(v, 1, sizeof(int)));
 
   int a = 10, b = 20, c = 30;
 
-  vector_push(v, &a);
-  vector_push(v, &b);
-  vector_push(v, &c);
+  ASSERT_OK(vector_push(v, &a));
+  ASSERT_OK(vector_push(v, &b));
+  ASSERT_OK(vector_push(v, &c));
 }
 
 void setup_char(Vector* v) {
-  vector_init(v, 1, sizeof(char));
+  ASSERT_OK(vector_init(v, 1, sizeof(char)));
 
   char a = 'a', b = 'b', c = 'c';
 
-  vector_push(v, &a);
-  vector_push(v, &b);
-  vector_push(v, &c);
+  ASSERT_OK(vector_push(v, &a));
+  ASSERT_OK(vector_push(v, &b));
+  ASSERT_OK(vector_push(v, &c));
 }
 
 void assert_int(Vector* v, size_t index, int expected) {

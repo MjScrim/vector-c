@@ -3,12 +3,12 @@
 #include <stdlib.h>
 #include <string.h>
 
-static void vector_grow_if_needed(struct Vector* v);
-static void vector_shrink_if_needed(struct Vector* v);
+static VectorStatus vector_grow_if_needed(struct Vector* v);
+static VectorStatus vector_shrink_if_needed(struct Vector* v);
 static void* vector_ptr(struct Vector* v, size_t index);
 
 /* === Lifecycle ================================================= */
-void vector_init(struct Vector *v, size_t capacity, size_t element_size) {
+VectorStatus vector_init(struct Vector *v, size_t capacity, size_t element_size) {
   if (capacity == 0) capacity = 1; 
 
   if (element_size == 0) {
@@ -16,7 +16,7 @@ void vector_init(struct Vector *v, size_t capacity, size_t element_size) {
     v->capacity = 0;
     v->size = 0;
     v->element_size = 0;
-    return;
+    return VECTOR_ERR_OUT_OF_BOUNDS;
   }
 
   v->data = malloc(capacity * element_size);  
@@ -25,81 +25,113 @@ void vector_init(struct Vector *v, size_t capacity, size_t element_size) {
     v->capacity = 0;
     v->size = 0;
     v->element_size = 0;
-    return;
+    return VECTOR_ERR_ALLOC_FAILED;
   }
 
   v->element_size = element_size;
   v->capacity = capacity;
   v->size = 0;
+
+  return VECTOR_SUCCESS;
 }
 
-void vector_free(struct Vector *v) {
+VectorStatus vector_free(struct Vector *v) {
+  if (!v) return VECTOR_ERR_NULL_PTR;
+
   free(v->data);
 
   v->data = NULL;
   v->size = 0;
   v->capacity = 0;
   v->element_size = 0;
+
+  return VECTOR_SUCCESS;
 }
 
 /* === Capacity ================================================= */
-void vector_reserve(struct Vector* v, size_t new_capacity) {
-  if (new_capacity <= v->capacity) return;
+VectorStatus vector_reserve(struct Vector* v, size_t new_capacity) {
+  if (!v) return VECTOR_ERR_NULL_PTR;
+
+  if (new_capacity <= v->capacity) return VECTOR_ERR_OUT_OF_BOUNDS;
 
   void* temp = realloc(v->data, new_capacity * v->element_size);
 
-  if (!temp) return;
+  if (!temp) return VECTOR_ERR_ALLOC_FAILED;
 
   v->data = temp;
   v->capacity = new_capacity;
+
+  return VECTOR_SUCCESS;
 }
 
-void vector_shrink_to_fit(struct Vector* v) {
+VectorStatus vector_shrink_to_fit(struct Vector* v) {
+  if (!v) return VECTOR_ERR_NULL_PTR;
+  
   if (v->size == v->capacity) {
-    return;
+    return VECTOR_ERR_OUT_OF_BOUNDS;
   }
 
   if (v->size == 0) {
     free(v->data);
     v->data = NULL;
     v->capacity = 0;
-    return;
+    return VECTOR_SUCCESS;
   }
 
   size_t new_capacity_bytes = v->size * v->element_size;
 
   void* new_data = realloc(v->data, new_capacity_bytes);
 
-  if (new_data != NULL) {
-    v->data = new_data;
-    v->capacity = v->size;
+  if (new_data == NULL) {
+    return VECTOR_ERR_ALLOC_FAILED;
   }
+
+  v->data = new_data;
+  v->capacity = v->size;
+
+  return VECTOR_SUCCESS;
 }
 
 /* === Element acess ================================================= */
 const void* vector_at(struct Vector* v, size_t index) {
+  if (!v) return NULL;
+
   if (index >= v->size) return NULL;
 
   return (const char*)v->data + index * v->element_size;
 }
 
-void vector_get(struct Vector* v, size_t index, void* dest) {
-  if (index >= v->size) return;
+VectorStatus vector_get(struct Vector* v, size_t index, void* dest) {
+  if (!v) return VECTOR_ERR_NULL_PTR;
+
+  if (index >= v->size) return VECTOR_ERR_OUT_OF_BOUNDS;
 
   void* src = vector_ptr(v, index);
 
+  if (src == NULL) {
+    return VECTOR_ERR_NULL_PTR;
+  }
+
   memcpy(dest, src, v->element_size);
+
+  return VECTOR_SUCCESS;
 }
 
 void* vector_begin(struct Vector* v) {
+  if (!v) return NULL;
+
   return v->data;
 }
 
 void* vector_end(struct Vector* v) {
+  if (!v) return NULL;
+
   return vector_ptr(v, v->size);
 }
 
 void* vector_find(struct Vector* v, void* target, bool (*compare)(void*, void*)) {
+  if (!v) return NULL;
+
   char* it = vector_begin(v);
   char* end = vector_end(v);
 
@@ -114,7 +146,9 @@ void* vector_find(struct Vector* v, void* target, bool (*compare)(void*, void*))
   return NULL;
 }
 
-void vector_foreach(struct Vector* v, void (*action)(void*)) {
+VectorStatus vector_foreach(struct Vector* v, void (*action)(void*)) {
+  if (!v) return VECTOR_ERR_NULL_PTR;
+
   char* it = vector_begin(v);
   char* end = vector_end(v);
 
@@ -122,21 +156,36 @@ void vector_foreach(struct Vector* v, void (*action)(void*)) {
     action(it);
     it += v->element_size;
   }
+
+  return VECTOR_SUCCESS;
 }
 
 /* === Modifiers ================================================= */
-void vector_push(struct Vector* v, void* value) {
-  vector_grow_if_needed(v); 
+VectorStatus vector_push(struct Vector* v, void* value) {
+  if (!v || !value) return VECTOR_ERR_NULL_PTR;
+
+  VectorStatus status = vector_grow_if_needed(v); 
+
+  if (status != VECTOR_SUCCESS) {
+    return status;
+  }
 
   memcpy(vector_ptr(v, v->size), value, v->element_size);
-
   v->size++;
+
+  return VECTOR_SUCCESS;
 }
 
-void vector_insert(struct Vector* v, void* value, size_t index) {
-  if (index > v->size) return;
+VectorStatus vector_insert(struct Vector* v, void* value, size_t index) {
+  if (!v || !value) return VECTOR_ERR_NULL_PTR;
 
-   vector_grow_if_needed(v);
+  if (index > v->size) return VECTOR_ERR_OUT_OF_BOUNDS;
+
+  VectorStatus status = vector_grow_if_needed(v);
+
+  if (status != VECTOR_SUCCESS) {
+    return status;
+  }
 
   size_t n = (v->size - index) * v->element_size; 
 
@@ -149,14 +198,18 @@ void vector_insert(struct Vector* v, void* value, size_t index) {
   memcpy(vector_ptr(v, index), value, v->element_size);
 
   v->size++;
+
+  return VECTOR_SUCCESS;
 }
 
-void vector_remove(struct Vector* v, size_t index) {
-  if (index >= v->size) return;
+VectorStatus vector_remove(struct Vector* v, size_t index) {
+  if (!v) return VECTOR_ERR_NULL_PTR;
+
+  if (index >= v->size) return VECTOR_ERR_OUT_OF_BOUNDS;
 
   if (index == v->size - 1) {
-    vector_pop(v);
-    return;
+    VectorStatus status = vector_pop(v);
+    return status;
   }
 
   size_t n = (v->size - index - 1) * v->element_size;
@@ -168,12 +221,14 @@ void vector_remove(struct Vector* v, size_t index) {
   );
 
   v->size--;
-
-  vector_shrink_if_needed(v);
+  
+  return vector_shrink_if_needed(v);
 }
 
-void vector_remove_range(struct Vector *v, size_t start_index, size_t count) {
-  if (start_index >= v->size || count == 0) return;
+VectorStatus vector_remove_range(struct Vector *v, size_t start_index, size_t count) {
+  if (!v) return VECTOR_ERR_NULL_PTR;
+
+  if (start_index >= v->size || count == 0) return VECTOR_ERR_OUT_OF_BOUNDS;
 
   if (start_index + count > v->size) {
     count = v->size - start_index;
@@ -192,57 +247,75 @@ void vector_remove_range(struct Vector *v, size_t start_index, size_t count) {
 
   v->size -= count;
 
-  vector_shrink_if_needed(v);
+  return vector_shrink_if_needed(v);
 }
 
-void vector_pop(struct Vector* v) {
-  if (v->size == 0) return;
+VectorStatus vector_pop(struct Vector* v) {
+  if (!v) return VECTOR_ERR_NULL_PTR;
+
+  if (v->size == 0) return VECTOR_SUCCESS;
   v->size--;
 
-  vector_shrink_if_needed(v);
+  return vector_shrink_if_needed(v);
 }
 
-void vector_set(struct Vector *v, size_t index, void *value) {
-  if (index >= v->size) return;
+VectorStatus vector_set(struct Vector *v, size_t index, void *value) {
+  if (!v) return VECTOR_ERR_NULL_PTR;
+
+  if (index >= v->size) return VECTOR_ERR_OUT_OF_BOUNDS;
 
   memcpy(vector_ptr(v, index), value, v->element_size);
+
+  return VECTOR_SUCCESS;
 }
 
 /* === Utils ================================================= */
-void vector_print(struct Vector* v, void (*print_fn)(void*)) {
-  if (!print_fn) return;
+VectorStatus vector_print(struct Vector* v, void (*print_fn)(void*)) {
+  if (!v) return VECTOR_ERR_NULL_PTR;
 
-  vector_foreach(v, print_fn); 
+  if (!print_fn) return VECTOR_ERR_NULL_PTR;
+
+  VectorStatus status = vector_foreach(v, print_fn); 
 
   printf("\n");
+
+  return status;
 }
 
 /* === Static intern ================================================= */
-static void vector_grow_if_needed(struct Vector* v) {
+static VectorStatus vector_grow_if_needed(struct Vector* v) {
   if (v->size == v->capacity) {
     size_t new_capacity = 2 * v->capacity;
 
     void* temp = realloc(v->data, new_capacity * v->element_size);
 
-    if (!temp) return;
+    if (!temp) return VECTOR_ERR_ALLOC_FAILED;
 
     v->data = temp;
     v->capacity = new_capacity;
   } 
+
+  return VECTOR_SUCCESS;
 }
 
-static void vector_shrink_if_needed(struct Vector* v) {
+static VectorStatus vector_shrink_if_needed(struct Vector* v) {
   if (v->capacity > 4 && v->size <= v->capacity / 4) {
     size_t new_capacity = v->capacity / 2;
     size_t new_capacity_bytes = new_capacity * v->element_size;
 
     void* new_data = realloc(v->data, new_capacity_bytes);
 
-    if (new_data != NULL) {
-      v->data = new_data;
-      v->capacity = new_capacity;
+    if (new_data == NULL) {
+      return VECTOR_ERR_ALLOC_FAILED;
     }
+
+    v->data = new_data;
+    v->capacity = new_capacity;
+
+    return VECTOR_SUCCESS;
   }
+
+  return VECTOR_SUCCESS;
 }
 
 static void* vector_ptr(struct Vector* v, size_t index) {
