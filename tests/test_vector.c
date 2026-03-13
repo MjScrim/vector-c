@@ -4,6 +4,8 @@
 #include <stdlib.h>
 #include "vector.h"
 
+static void setup_int(struct Vector* v);
+static void setup_char(struct Vector* v);
 static void assert_int(struct Vector* v, size_t index, int expected);
 static void assert_char(struct Vector* v, size_t index, char expected);
 static bool compare_int(void* element, void* target);
@@ -27,26 +29,20 @@ void test_vector_get() {
   assert(v.size == 3);
   assert(get_char == *(char*)vector_at(&v, 0));
 
-  assert(*(char*)vector_at(&v, 1) == 's');
-  assert(*(char*)vector_at(&v, 2) == 'd');
+  assert(*(char*)vector_at(&v, 1) == b);
+  assert(*(char*)vector_at(&v, 2) == c);
   
   vector_free(&v);
 }
 
 void test_begin() {
   struct Vector v;
-  vector_init(&v, 1, sizeof(int));
-
-  int i = 1, o = 2, p = 3;
-
-  vector_push(&v, &i);
-  vector_push(&v, &o);
-  vector_push(&v, &p);
+  setup_int(&v);
 
   int begin = *(int*)vector_begin(&v);
 
   assert(v.size == 3);
-  assert(begin == i);
+  assert(begin == 10);
 
   vector_free(&v);
 }
@@ -57,7 +53,7 @@ void test_end() {
 
   assert(vector_begin(&v) == vector_end(&v));
 
-  char a = 'a', b = 's', c = 'd';
+  char a = 'a', b = 'b', c = 'c';
 
   vector_push(&v, &a);
   vector_push(&v, &b);
@@ -78,13 +74,9 @@ void test_end() {
 
 void test_find() {
   struct Vector v;
-  vector_init(&v, 1, sizeof(int));
+  setup_int(&v);
 
-  int a = 10, b = 20, c = 30;
-
-  vector_push(&v, &a);
-  vector_push(&v, &b);
-  vector_push(&v, &c);
+  int b = 20; 
 
   void* src = vector_find(&v, &b, compare_int);
 
@@ -104,15 +96,9 @@ void test_find() {
 
 void test_foreach() {
   struct Vector v;
-  vector_init(&v, 1, sizeof(int));
+  setup_int(&v);
 
-  int a = 2, b = 3, c = 4, d = 6, e = 7;
-
-  vector_push(&v, &a);
-  vector_push(&v, &b);
-  vector_push(&v, &c);
-  vector_push(&v, &d);
-  vector_push(&v, &e);
+  int a = 10, b = 20, c = 30;
 
   vector_foreach(&v, double_value);
 
@@ -126,53 +112,39 @@ void test_foreach() {
 /* === Modifiers Tests ================================================= */
 void test_push() {
   struct Vector v;
-  vector_init(&v, 2, sizeof(int));
+  setup_int(&v); 
 
   int a = 10, b = 20, c = 30;
-
-  vector_push(&v, &a);
-  vector_push(&v, &b);
-  vector_push(&v, &c);
 
   assert(v.size == 3);
   assert(v.capacity == 4);
 
-  assert_int(&v, 0, 10);
-  assert_int(&v, 1, 20);
-  assert_int(&v, 2, 30);
+  assert_int(&v, 0, a);
+  assert_int(&v, 1, b);
+  assert_int(&v, 2, c);
 
   vector_free(&v);
 }
 
 void test_remove() {
   struct Vector v;
-  vector_init(&v, 3, sizeof(int));
-
-  int a = 12, b = 13, c = 14;
-
-  vector_push(&v, &a);
-  vector_push(&v, &b);
-  vector_push(&v, &c);
+  setup_int(&v); 
 
   vector_remove(&v, 1);
 
   assert(v.size == 2);
 
-  assert_int(&v, 0, 12);
-  assert_int(&v, 1, 14);
+  assert_int(&v, 0, 10);
+  assert_int(&v, 1, 30);
 
   vector_free(&v);
 }
 
 void test_remove_first_and_last() {
   struct Vector v;
-  vector_init(&v, 2, sizeof(char));
-  
-  char a = 'a', b = 's', c = 'd';
+  setup_char(&v); 
 
-  vector_push(&v, &a);
-  vector_push(&v, &b);
-  vector_push(&v, &c);
+  char b = 'b';
 
   vector_remove(&v, 0);
   //0 -> removed, last element back 1 index. 2 - 1 = 1.
@@ -184,9 +156,23 @@ void test_remove_first_and_last() {
   vector_free(&v);
 }
 
+void test_remove_range() {
+  struct Vector v;
+  setup_int(&v);
+
+  int b = 20;
+
+  vector_remove_range(&v, 0, 1);
+
+  assert(v.size == 2);
+  assert_int(&v, 0, b);
+
+  vector_free(&v);
+}
+
 void insert_test() {
   struct Vector v;
-  vector_init(&v, 2, sizeof(char));
+  vector_init(&v, 1, sizeof(char));
   
   char a = 'q', b = 'w', c = 'e', d = 'r', e = 't';
 
@@ -206,16 +192,11 @@ void insert_test() {
 
 void test_pop() {
   struct Vector v;
-  vector_init(&v, 2, sizeof(int));
-
-  int a = 10, b = 20;
-
-  vector_push(&v, &a);
-  vector_push(&v, &b);
+  setup_int(&v);
 
   vector_pop(&v);
 
-  assert(v.size == 1);
+  assert(v.size == 2);
   assert_int(&v, 0, 10);
 
   vector_free(&v);
@@ -223,13 +204,9 @@ void test_pop() {
 
 void test_set() {
   struct Vector v;
-  vector_init(&v, 1, sizeof(char));
+  setup_char(&v);
 
-  char a = 'f', b = 'g', c = 'h', d = 'j';
-
-  vector_push(&v, &a);
-  vector_push(&v, &b);
-  vector_push(&v, &c);
+  char d = 'j';
 
   vector_set(&v, 1, &d);
 
@@ -250,7 +227,7 @@ void test_push_stress() {
     vector_push(&v, &i);
   }
 
-  assert(v.size = N);
+  assert(v.size == (size_t)N);
 
   for (int i = 0; i < N; i++) {
     assert_int(&v, i, i);
@@ -280,11 +257,14 @@ int main() {
   test_vector_get();
   test_begin();
   test_end();
+  test_find();
+  test_foreach();
 
   //Modifiers
   test_push();
-  test_remove();
+  test_remove(); 
   test_remove_first_and_last();
+  test_remove_range();
   insert_test();
   test_pop();
   test_set();
@@ -296,6 +276,26 @@ int main() {
   printf("All tests passed\n");
 
   return 0;
+}
+
+static void setup_int(struct Vector* v) {
+  vector_init(v, 1, sizeof(int));
+
+  int a = 10, b = 20, c = 30;
+
+  vector_push(v, &a);
+  vector_push(v, &b);
+  vector_push(v, &c);
+}
+
+static void setup_char(struct Vector* v) {
+  vector_init(v, 1, sizeof(char));
+
+  char a = 'a', b = 'b', c = 'c';
+
+  vector_push(v, &a);
+  vector_push(v, &b);
+  vector_push(v, &c);
 }
 
 static void assert_int(struct Vector* v, size_t index, int expected) {
