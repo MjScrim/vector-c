@@ -7,7 +7,9 @@ static VectorStatus vector_grow_if_needed(struct Vector* v);
 static VectorStatus vector_shrink_if_needed(struct Vector* v);
 static void* vector_ptr(struct Vector* v, size_t index);
 
-/* === Lifecycle ================================================= */
+/* ==========================================================================
+ * LIFECYCLE
+ * ========================================================================== */
 VectorStatus vector_init(struct Vector *v, size_t capacity, size_t element_size) {
   if (capacity == 0) capacity = 1; 
 
@@ -48,7 +50,9 @@ VectorStatus vector_free(struct Vector *v) {
   return VECTOR_SUCCESS;
 }
 
-/* === Capacity ================================================= */
+/* ==========================================================================
+ * CAPACITY
+ * ========================================================================== */
 VectorStatus vector_reserve(struct Vector* v, size_t new_capacity) {
   if (!v) return VECTOR_ERR_NULL_PTR;
 
@@ -92,7 +96,9 @@ VectorStatus vector_shrink_to_fit(struct Vector* v) {
   return VECTOR_SUCCESS;
 }
 
-/* === Element acess ================================================= */
+/* ==========================================================================
+ * ELEMENT ACCESS
+ * ========================================================================== */
 const void* vector_at(struct Vector* v, size_t index) {
   if (!v) return NULL;
 
@@ -160,7 +166,9 @@ VectorStatus vector_foreach(struct Vector* v, void (*action)(void*)) {
   return VECTOR_SUCCESS;
 }
 
-/* === Modifiers ================================================= */
+/* ==========================================================================
+ * MODIFIERS
+ * ========================================================================== */
 VectorStatus vector_push(struct Vector* v, void* value) {
   if (!v || !value) return VECTOR_ERR_NULL_PTR;
 
@@ -270,12 +278,16 @@ VectorStatus vector_set(struct Vector *v, size_t index, void *value) {
 }
 
 VectorStatus vector_clear(struct Vector* v) {
+  if (!v) return VECTOR_ERR_NULL_PTR;
+
   v->size = 0;
 
   return VECTOR_SUCCESS;
 }
 
-/* === Utils ================================================= */
+/* ==========================================================================
+ * UTILS
+ * ========================================================================== */
 VectorStatus vector_print(struct Vector* v, void (*print_fn)(void*)) {
   if (!v) return VECTOR_ERR_NULL_PTR;
 
@@ -288,7 +300,9 @@ VectorStatus vector_print(struct Vector* v, void (*print_fn)(void*)) {
   return status;
 }
 
-/* === Static intern ================================================= */
+/* ==========================================================================
+ * INTERNAL
+ * ========================================================================== */
 static VectorStatus vector_grow_if_needed(struct Vector* v) {
   if (v->size == v->capacity) {
     size_t new_capacity = v->capacity ? v->capacity * 2 : 1;

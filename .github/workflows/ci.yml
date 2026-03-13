@@ -1,0 +1,25 @@
+name: Build and Test
+
+# O robô vai rodar toda vez que você der um push para a branch main
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build: 
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Setup CMake
+      uses: jwlawson/actions-setup-cmake@v2.0
+
+    - name: Run Setup
+      run: make setup
+
+    - name: Run Tests
+      run: make check
