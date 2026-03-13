@@ -179,10 +179,10 @@ void vector_remove_range(struct Vector *v, size_t start_index, size_t count) {
     count = v->size - start_index;
   }
 
-  size_t elements_to_moive = v->size - (start_index + count);
+  size_t elements_to_move = v->size - (start_index + count);
 
-  if (elements_to_moive > 0) {
-    size_t n = elements_to_moive * v->element_size;
+  if (elements_to_move > 0) {
+    size_t n = elements_to_move * v->element_size;
     memmove(
       vector_ptr(v, start_index),
       vector_ptr(v, start_index + count),
@@ -232,7 +232,7 @@ static void vector_grow_if_needed(struct Vector* v) {
 }
 
 static void vector_shrink_if_needed(struct Vector* v) {
-  if (v->capacity > 4 && v->capacity / 4) {
+  if (v->capacity > 4 && v->size <= v->capacity / 4) {
     size_t new_capacity = v->capacity / 2;
     size_t new_capacity_bytes = new_capacity * v->element_size;
 
