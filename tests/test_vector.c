@@ -11,6 +11,33 @@ static void assert_char(struct Vector* v, size_t index, char expected);
 static bool compare_int(void* element, void* target);
 static void double_value(void* n);
 
+/* === Capacity Tests ================================================= */
+void test_reserve() {
+  struct Vector v;
+  setup_char(&v);
+
+  char a = 'a', b = 'b', c = 'c';
+
+  size_t new_capacity = 10;
+  size_t old_size = v.size;
+
+  vector_reserve(&v, new_capacity);
+
+  assert(v.capacity == new_capacity);
+  assert(old_size == v.size);
+
+  assert_char(&v, 0, a);
+  assert_char(&v, 1, b);
+  assert_char(&v, 2, c);
+
+  char d = 'd';
+  vector_push(&v, &d);
+  assert(v.size == 4);
+  assert_char(&v, 3, 'd');
+
+  vector_free(&v);
+}
+
 /* === Element Acess Tests ================================================= */
 void test_vector_get() {
   struct Vector v;
@@ -253,6 +280,9 @@ void test_random_operations() {
 }
 
 int main() {
+  //Capacity
+  test_reserve(); 
+
   //Element Acess
   test_vector_get();
   test_begin();
