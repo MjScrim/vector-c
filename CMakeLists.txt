@@ -21,7 +21,10 @@ add_custom_target(run
 
 enable_testing()
 
-add_executable(vector_test tests/test_vector.c)
+file(GLOB TEST_SOURCES "tests/*.c")
+
+add_executable(vector_test ${TEST_SOURCES})
+
 target_link_libraries(vector_test PRIVATE vector)
 
 add_test(NAME VectorTestSuite COMMAND vector_test)

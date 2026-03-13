@@ -6,7 +6,7 @@ void print_int(void *p) {
 }
 
 int main() {
-  struct Vector v;
+  Vector v;
 
   vector_init(&v, 2, sizeof(int));
 

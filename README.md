@@ -17,7 +17,7 @@ internally.
 ## Example
 
 ```c
-struct Vector v;
+Vector v;
 
 vector_init(&v, 2, sizeof(int));
 

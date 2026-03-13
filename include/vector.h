@@ -5,12 +5,12 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-struct Vector {
+typedef struct Vector {
   void* data;
   size_t capacity;
   size_t size;
   size_t element_size;
-};
+} Vector;
 
 /* =========================
    Lifecycle

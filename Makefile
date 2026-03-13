@@ -36,3 +36,5 @@ test:
 
 clean:
 	rm -rf build
+
+.PHONY: all run test clean cmake-build ctest check setup
