@@ -18,7 +18,7 @@ setup:
 build-cmake:
 	$(CMAKE) --build build
 
-run-cmake:
+run-cmake: build-cmake
 	$(CMAKE) --build build --target run
 
 ctest:

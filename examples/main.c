@@ -5,23 +5,27 @@ void print_int(void *p) {
     printf("%d ", *x);
 }
 
+bool search_number(void* a, void* b) {
+    return *(int*)a == *(int*)b;
+}
+
 int main() {
   Vector v;
-
   vector_init(&v, 2, sizeof(int));
 
-  int a = 10;
-  int b = 20;
-  int c = 30;
-  int d = 15;
+  VECTOR_PUSH(&v, int, 10);
+  VECTOR_PUSH(&v, int, 20);
+  VECTOR_INSERT(&v, int, 99, 1);
+  VECTOR_SET(&v, int, 100, 0);
 
-  vector_push(&v, &a);
-  vector_push(&v, &b);
-  vector_push(&v, &c); 
+  for (size_t i = 0; i < v.size; i++) {
+    printf("v[%zu] = %d\n", i, VECTOR_AT(&v, int, i));
+  }
 
-  vector_insert(&v, &d, 1);
-  
-  vector_print(&v, print_int);
+  int* target = VECTOR_FIND(&v, int, 100, search_number);
+  if(target) {
+    printf("%d\n", *target);
+  }
 
   vector_free(&v);
 

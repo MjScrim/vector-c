@@ -4,6 +4,7 @@
 #include <stdbool.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <assert.h>
 
 typedef struct Vector {
   void* data;
@@ -55,5 +56,36 @@ VectorStatus vector_clear(struct Vector* v);
    Utils
    ========================= */
 VectorStatus vector_print(struct Vector* v, void (*print_fn)(void*));
+
+/* =========================
+   TYPE-SAFE MACROS (Generics via C99)
+   ========================= */
+
+//========================= Element access =========================
+#define VECTOR_AT(vec_ptr, type, index) \
+    (assert(sizeof(type) == (vec_ptr)->element_size && "VECTOR_AT: Incorrect type!"), \
+     *(type*)vector_at((vec_ptr), (index)))
+
+#define VECTOR_GET(vec_ptr, type, index, dest_ptr) \
+    (assert(sizeof(type) == (vec_ptr)->element_size && "VECTOR_GET:  Incorrect type!"), \
+     vector_get((vec_ptr), (index), (void*)(dest_ptr)))
+
+#define VECTOR_FIND(vec_ptr, type, value, compare_fn) \
+    (assert(sizeof(type) == (vec_ptr)->element_size && "VECTOR_FIND:  Incorrect type"), \
+     (type*)vector_find((vec_ptr), &(type){value}, (bool (*)(void*, void*))(compare_fn)))
+
+//========================= Modifiers =========================
+#define VECTOR_PUSH(vec_ptr, type, value) \
+    (assert(sizeof(type) == (vec_ptr)->element_size && "VECTOR_PUSH: Size type incorrect!"), \
+     vector_push((vec_ptr), &(type){value}))
+
+#define VECTOR_INSERT(vec_ptr, type, value, index) \
+    (assert(sizeof(type) == (vec_ptr)->element_size && "VECTOR_INSERT:  Incorrect type!"), \
+     vector_insert((vec_ptr), &(type){value}, (index)))
+
+#define VECTOR_SET(vec_ptr, type, value, index) \
+    (assert(sizeof(type) == (vec_ptr)->element_size && "VECTOR_SET:  Incorrect type!"), \
+     vector_set((vec_ptr), (index), &(type){value}))
+
 
 #endif

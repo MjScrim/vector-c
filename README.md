@@ -18,24 +18,39 @@ internally.
 ## Example
 
 ```c
-Vector v;
+#include "vector.h"
 
-vector_init(&v, 2, sizeof(int));
+void print_int(void *p) {
+    int *x = (int*)p;
+    printf("%d ", *x);
+}
 
-int a = 10;
-int b = 20;
-int c = 30;
-int d = 15;
+bool search_number(void* a, void* b) {
+    return *(int*)a == *(int*)b;
+}
 
-vector_push(&v, &a);
-vector_push(&v, &b);
-vector_push(&v, &c);
+int main() {
+  Vector v;
+  vector_init(&v, 2, sizeof(int));
 
-vector_insert(&v, &d, 1);
+  VECTOR_PUSH(&v, int, 10);
+  VECTOR_PUSH(&v, int, 20);
+  VECTOR_INSERT(&v, int, 99, 1);
+  VECTOR_SET(&v, int, 100, 0);
 
-vector_print(&v, print_int);
+  for (size_t i = 0; i < v.size; i++) {
+    printf("v[%zu] = %d\n", i, VECTOR_AT(&v, int, i));
+  }
 
-vector_free(&v);
+  int* target = VECTOR_FIND(&v, int, 100, search_number);
+  if(target) {
+    printf("%d\n", *target);
+  }
+
+  vector_free(&v);
+
+  return 0;
+}
 ```
 
 ## Build and Run
