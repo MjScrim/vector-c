@@ -10,6 +10,15 @@ static void *vector_ptr(struct Vector *v, size_t index);
 /* ==========================================================================
  * LIFECYCLE
  * ========================================================================== */
+
+/**
+ * vector_init() - Initializes a dynamic array
+ * @v: pointer to the vector structure
+ * @capacity: initial number of elements
+ * @element_size: size of each element in bytes
+ *
+ * Return: VECTOR_SUCCESS or error code.
+ */
 VectorStatus vector_init(struct Vector *v, size_t capacity, size_t element_size)
 {
 	if (capacity == 0)
@@ -39,6 +48,12 @@ VectorStatus vector_init(struct Vector *v, size_t capacity, size_t element_size)
 	return VECTOR_SUCCESS;
 }
 
+/**
+ * vector_free() - Deallocates the vector's memory and resets its state
+ * @v: pointer to the vector to be freed
+ *
+ * Return: VECTOR_SUCCESS or VECTOR_ERR_NULL_PTR if v is null.
+ */
 VectorStatus vector_free(struct Vector *v)
 {
 	if (!v)
@@ -57,6 +72,14 @@ VectorStatus vector_free(struct Vector *v)
 /* ==========================================================================
  * CAPACITY
  * ========================================================================== */
+
+/**
+ * vector_reserve() - Manually increases the capacity of the vector
+ * @v: pointer to the vector
+ * @new_capacity: the minimum number of elements to pre-allocate
+ *
+ * Return: VECTOR_SUCCESS, VECTOR_ERR_ALLOC_FAILED, or VECTOR_ERR_OUT_OF_BOUNDS.
+ */
 VectorStatus vector_reserve(struct Vector *v, size_t new_capacity)
 {
 	if (!v)
@@ -76,6 +99,14 @@ VectorStatus vector_reserve(struct Vector *v, size_t new_capacity)
 	return VECTOR_SUCCESS;
 }
 
+/**
+ * vector_shrink_to_fit() - Reduces capacity to match the current size
+ * @v: pointer to the vector
+ *
+ * Useful for freeing unused pre-allocated memory.
+ *
+ * Return: VECTOR_SUCCESS or error code.
+ */
 VectorStatus vector_shrink_to_fit(struct Vector *v)
 {
 	if (!v)
@@ -109,6 +140,14 @@ VectorStatus vector_shrink_to_fit(struct Vector *v)
 /* ==========================================================================
  * ELEMENT ACCESS
  * ========================================================================== */
+
+/**
+ * vector_at() - Returns a constant pointer to an element at a specific index
+ * @v: pointer to the vector
+ * @index: index of the element to access
+ *
+ * Return: Pointer to the element, or NULL if out of bounds.
+ */
 const void *vector_at(struct Vector *v, size_t index)
 {
 	if (!v)
@@ -120,6 +159,14 @@ const void *vector_at(struct Vector *v, size_t index)
 	return (const char *)v->data + index * v->element_size;
 }
 
+/**
+ * vector_get() - Copies an element from the vector into a destination pointer
+ * @v: pointer to the vector
+ * @index: index of the element
+ * @dest: pointer where the data will be copied to
+ *
+ * Return: VECTOR_SUCCESS or error code.
+ */
 VectorStatus vector_get(struct Vector *v, size_t index, void *dest)
 {
 	if (!v)
@@ -139,6 +186,12 @@ VectorStatus vector_get(struct Vector *v, size_t index, void *dest)
 	return VECTOR_SUCCESS;
 }
 
+/**
+ * vector_begin() - Returns a pointer to the first element
+ * @v: pointer to the vector
+ *
+ * Return: Pointer to data or NULL if vector is empty or null.
+ */
 void *vector_begin(struct Vector *v)
 {
 	if (!v)
@@ -147,6 +200,12 @@ void *vector_begin(struct Vector *v)
 	return v->data;
 }
 
+/**
+ * vector_end() - Returns a pointer to the memory address after the last element
+ * @v: pointer to the vector
+ *
+ * Return: Pointer to end of data or NULL.
+ */
 void *vector_end(struct Vector *v)
 {
 	if (!v)
@@ -155,6 +214,14 @@ void *vector_end(struct Vector *v)
 	return vector_ptr(v, v->size);
 }
 
+/**
+ * vector_find() - Performs a linear search using a predicate function
+ * @v: pointer to the vector
+ * @target: the value to search for
+ * @compare: function pointer that returns true if elements match
+ *
+ * Return: Pointer to the first matching element, or NULL if not found.
+ */
 void *vector_find(struct Vector *v, void *target, bool (*compare)(void *, void *))
 {
 	if (!v)
@@ -174,6 +241,13 @@ void *vector_find(struct Vector *v, void *target, bool (*compare)(void *, void *
 	return NULL;
 }
 
+/**
+ * vector_foreach() - Executes a function for each element in the vector
+ * @v: pointer to the vector
+ * @action: function pointer to be executed for each element
+ *
+ * Return: VECTOR_SUCCESS or error code.
+ */
 VectorStatus vector_foreach(struct Vector *v, void (*action)(void *))
 {
 	if (!v)
@@ -193,6 +267,14 @@ VectorStatus vector_foreach(struct Vector *v, void (*action)(void *))
 /* ==========================================================================
  * MODIFIERS
  * ========================================================================== */
+
+/**
+ * vector_push() - Appends a value to the end of the vector
+ * @v: pointer to the vector
+ * @value: pointer to the data to be added
+ *
+ * Return: VECTOR_SUCCESS or error code.
+ */
 VectorStatus vector_push(struct Vector *v, void *value)
 {
 	if (!v || !value)
@@ -210,6 +292,14 @@ VectorStatus vector_push(struct Vector *v, void *value)
 	return VECTOR_SUCCESS;
 }
 
+/**
+ * vector_insert() - Inserts a value at a specific index, shifting elements
+ * @v: pointer to the vector
+ * @value: pointer to the data to be inserted
+ * @index: position to insert the data
+ *
+ * Return: VECTOR_SUCCESS or error code.
+ */
 VectorStatus vector_insert(struct Vector *v, void *value, size_t index)
 {
 	if (!v || !value)
@@ -235,6 +325,13 @@ VectorStatus vector_insert(struct Vector *v, void *value, size_t index)
 	return VECTOR_SUCCESS;
 }
 
+/**
+ * vector_remove() - Removes an element at a specific index
+ * @v: pointer to the vector
+ * @index: index of the element to remove
+ *
+ * Return: VECTOR_SUCCESS or error code.
+ */
 VectorStatus vector_remove(struct Vector *v, size_t index)
 {
 	if (!v)
@@ -257,6 +354,14 @@ VectorStatus vector_remove(struct Vector *v, size_t index)
 	return vector_shrink_if_needed(v);
 }
 
+/**
+ * vector_remove_range() - Removes multiple elements in a specific range
+ * @v: pointer to the vector
+ * @start_index: starting index of the range
+ * @count: number of elements to remove
+ *
+ * Return: VECTOR_SUCCESS or error code.
+ */
 VectorStatus vector_remove_range(struct Vector *v, size_t start_index, size_t count)
 {
 	if (!v)
@@ -273,7 +378,11 @@ VectorStatus vector_remove_range(struct Vector *v, size_t start_index, size_t co
 
 	if (elements_to_move > 0) {
 		size_t n = elements_to_move * v->element_size;
-		memmove(vector_ptr(v, start_index), vector_ptr(v, start_index + count), n);
+		memmove(
+			vector_ptr(v, start_index),
+			vector_ptr(v, start_index + count)
+			, n
+		);
 	}
 
 	v->size -= count;
@@ -281,6 +390,12 @@ VectorStatus vector_remove_range(struct Vector *v, size_t start_index, size_t co
 	return vector_shrink_if_needed(v);
 }
 
+/**
+ * vector_pop() - Removes the last element of the vector
+ * @v: pointer to the vector
+ *
+ * Return: VECTOR_SUCCESS or error code.
+ */
 VectorStatus vector_pop(struct Vector *v)
 {
 	if (!v)
@@ -293,6 +408,14 @@ VectorStatus vector_pop(struct Vector *v)
 	return vector_shrink_if_needed(v);
 }
 
+/**
+ * vector_set() - Overwrites an existing element with new data
+ * @v: pointer to the vector
+ * @index: index to overwrite
+ * @value: pointer to the new data
+ *
+ * Return: VECTOR_SUCCESS or error code.
+ */
 VectorStatus vector_set(struct Vector *v, size_t index, void *value)
 {
 	if (!v)
@@ -306,6 +429,12 @@ VectorStatus vector_set(struct Vector *v, size_t index, void *value)
 	return VECTOR_SUCCESS;
 }
 
+/**
+ * vector_clear() - Resets the vector size to zero without freeing memory
+ * @v: pointer to the vector
+ *
+ * Return: VECTOR_SUCCESS or error code.
+ */
 VectorStatus vector_clear(struct Vector *v)
 {
 	if (!v)
@@ -319,6 +448,14 @@ VectorStatus vector_clear(struct Vector *v)
 /* ==========================================================================
  * UTILS
  * ========================================================================== */
+
+/**
+ * vector_print() - Iterates and prints elements using a provided function
+ * @v: pointer to the vector
+ * @print_fn: function pointer that handles the printing of a single element
+ *
+ * Return: VECTOR_SUCCESS or error code.
+ */
 VectorStatus vector_print(struct Vector *v, void (*print_fn)(void *))
 {
 	if (!v)
@@ -334,6 +471,13 @@ VectorStatus vector_print(struct Vector *v, void (*print_fn)(void *))
 	return status;
 }
 
+/**
+ * vector_clone() - Creates a deep copy of a vector
+ * @dest: pointer to an uninitialized vector structure
+ * @src: pointer to the source vector to copy from
+ *
+ * Return: VECTOR_SUCCESS or error code.
+ */
 VectorStatus vector_clone(struct Vector *dest, struct Vector *src)
 {
 	if (!dest || !src)
@@ -343,7 +487,11 @@ VectorStatus vector_clone(struct Vector *dest, struct Vector *src)
 		return VECTOR_ERR_OUT_OF_BOUNDS;
 	}
 
-	VectorStatus status = vector_init(dest, src->capacity, src->element_size);
+	VectorStatus status = vector_init(
+		dest,
+		src->capacity,
+		src->element_size
+	);
 	if (status != VECTOR_SUCCESS) {
 		return status;
 	}
@@ -359,8 +507,15 @@ VectorStatus vector_clone(struct Vector *dest, struct Vector *src)
 }
 
 /* ==========================================================================
- * INTERNAL
+ * INTERNAL HELPERS
  * ========================================================================== */
+
+/**
+ * vector_grow_if_needed() - Internal check to resize data when capacity is reached
+ * @v: pointer to the vector
+ *
+ * Return: VECTOR_SUCCESS or VECTOR_ERR_ALLOC_FAILED.
+ */
 static VectorStatus vector_grow_if_needed(struct Vector *v)
 {
 	if (v->size == v->capacity) {
@@ -378,6 +533,12 @@ static VectorStatus vector_grow_if_needed(struct Vector *v)
 	return VECTOR_SUCCESS;
 }
 
+/**
+ * vector_grow_if_needed() - Internal check to resize data when capacity is reached
+ * @v: pointer to the vector
+ *
+ * Return: VECTOR_SUCCESS or VECTOR_ERR_ALLOC_FAILED.
+ */
 static VectorStatus vector_shrink_if_needed(struct Vector *v)
 {
 	if (v->capacity > 4 && v->size <= v->capacity / 4) {
@@ -399,6 +560,13 @@ static VectorStatus vector_shrink_if_needed(struct Vector *v)
 	return VECTOR_SUCCESS;
 }
 
+/**
+ * vector_ptr() - Calculates the raw memory address of an element
+ * @v: pointer to the vector
+ * @index: element index
+ *
+ * Return: Pointer to the element.
+ */
 static void *vector_ptr(struct Vector *v, size_t index)
 {
 	return (char *)v->data + index * v->element_size;
