@@ -8,6 +8,7 @@ int main() {
   run_access_tests();
   run_modifiers_tests();
   run_stress_tests();
+  run_utils_tests();
 
   return 0;
 }

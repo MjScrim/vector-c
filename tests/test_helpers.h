@@ -23,5 +23,6 @@ void run_capacity_tests();
 void run_access_tests();
 void run_modifiers_tests();
 void run_stress_tests();
+void run_utils_tests();
 
 #endif
