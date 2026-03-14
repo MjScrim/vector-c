@@ -115,7 +115,7 @@ static void test_clear()
 	ASSERT_OK(vector_free(&v));
 }
 
-static void test_sort() 
+static void test_sort()
 {
 	Vector v;
 	ASSERT_OK(vector_init(&v, 1, sizeof(int)));

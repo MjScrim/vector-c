@@ -123,14 +123,14 @@ static void test_bsearh()
 	ASSERT_OK(VECTOR_PUSH(&v, int, 40));
 	ASSERT_OK(VECTOR_PUSH(&v, int, 80));
 	ASSERT_OK(VECTOR_PUSH(&v, int, 90));
-	
+
 	ASSERT_OK(vector_sort(&v, compare_ints));
 
 	int target = 40;
 
 	void *ptr = vector_bsearch(&v, &target, compare_ints);
 	assert(target == *(int *)ptr);
-	
+
 	ASSERT_OK(vector_free(&v));
 }
 

@@ -265,7 +265,8 @@ VectorStatus vector_foreach(struct Vector *v, void (*action)(void *))
  *
  * Return: VECTOR_SUCCESS or error code.
  */
-VectorStatus vector_foreach_range(struct Vector *v, size_t start_index, size_t end_index, void (*action)(void *))
+VectorStatus vector_foreach_range(struct Vector *v, size_t start_index, size_t end_index,
+				  void (*action)(void *))
 {
 	if (!v || !action)
 		return VECTOR_ERR_NULL_PTR;
@@ -424,11 +425,7 @@ VectorStatus vector_remove_range(struct Vector *v, size_t start_index, size_t co
 
 	if (elements_to_move > 0) {
 		size_t n = elements_to_move * v->element_size;
-		memmove(
-			vector_ptr(v, start_index),
-			vector_ptr(v, start_index + count)
-			, n
-		);
+		memmove(vector_ptr(v, start_index), vector_ptr(v, start_index + count), n);
 	}
 
 	v->size -= count;
@@ -558,11 +555,7 @@ VectorStatus vector_clone(struct Vector *dest, struct Vector *src)
 		return VECTOR_ERR_OUT_OF_BOUNDS;
 	}
 
-	VectorStatus status = vector_init(
-		dest,
-		src->capacity,
-		src->element_size
-	);
+	VectorStatus status = vector_init(dest, src->capacity, src->element_size);
 	if (status != VECTOR_SUCCESS) {
 		return status;
 	}
@@ -577,15 +570,14 @@ VectorStatus vector_clone(struct Vector *dest, struct Vector *src)
 	return VECTOR_SUCCESS;
 }
 
-
 /**
- * vector_extend() - Copy vector to the end of another vector  
+ * vector_extend() - Copy vector to the end of another vector
  * @dest: pointer to vector structure
  * @src: pointer to the source vector to copy from
  *
  * Return: VECTOR_SUCCESS or error code.
  */
-VectorStatus vector_extend(struct Vector *dest, struct Vector *src) 
+VectorStatus vector_extend(struct Vector *dest, struct Vector *src)
 {
 	if (!dest || !src)
 		return VECTOR_ERR_NULL_PTR;

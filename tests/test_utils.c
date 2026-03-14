@@ -48,8 +48,8 @@ static void test_extend()
 	ASSERT_OK(vector_free(&dest));
 }
 
-void run_utils_tests() 
-{ 
-	test_clone(); 
+void run_utils_tests()
+{
+	test_clone();
 	test_extend();
 }
