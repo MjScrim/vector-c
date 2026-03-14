@@ -287,6 +287,29 @@ VectorStatus vector_foreach_range(struct Vector *v, size_t start_index, size_t e
 	return VECTOR_SUCCESS;
 }
 
+/**
+ * vector_bsearch() - Performs a binary search on a sorted vector
+ * @v: pointer to the vector
+ * @key: pointer to the value to search for
+ * @compare: function pointer for element comparison
+ *
+ * Wrapper around the standard library bsearch(). The vector MUST
+ * be sorted prior to calling this function using the same comparison
+ * logic, otherwise the behavior is undefined.
+ *
+ * Return: Pointer to the found element, or NULL if not found.
+ */
+void *vector_bsearch(struct Vector *v, const void *key, int (*compare)(const void *, const void *))
+{
+	if (!v || !key || !compare)
+		return NULL;
+
+	if (v->size == 0)
+		return NULL;
+
+	return bsearch(key, v->data, v->size, v->element_size, compare);
+}
+
 /* ==========================================================================
  * MODIFIERS
  * ========================================================================== */

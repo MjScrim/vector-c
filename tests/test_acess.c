@@ -1,5 +1,6 @@
 #include "test_helpers.h"
 #include "vector.h"
+#include <assert.h>
 
 static void test_vector_get()
 {
@@ -112,6 +113,27 @@ static void test_foreach_range()
 	ASSERT_OK(vector_free(&v));
 }
 
+static void test_bsearh()
+{
+	Vector v;
+	setup_int(&v);
+
+	ASSERT_OK(VECTOR_PUSH(&v, int, 50));
+	ASSERT_OK(VECTOR_PUSH(&v, int, 60));
+	ASSERT_OK(VECTOR_PUSH(&v, int, 40));
+	ASSERT_OK(VECTOR_PUSH(&v, int, 80));
+	ASSERT_OK(VECTOR_PUSH(&v, int, 90));
+	
+	ASSERT_OK(vector_sort(&v, compare_ints));
+
+	int target = 40;
+
+	void *ptr = vector_bsearch(&v, &target, compare_ints);
+	assert(target == *(int *)ptr);
+	
+	ASSERT_OK(vector_free(&v));
+}
+
 void run_access_tests()
 {
 	test_vector_get();
@@ -120,4 +142,5 @@ void run_access_tests()
 	test_find();
 	test_foreach();
 	test_foreach_range();
+	test_bsearh();
 }
