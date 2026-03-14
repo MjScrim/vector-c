@@ -40,4 +40,7 @@ test:
 clean:
 	rm -rf build
 
+format:
+	find src include tests -type f \( -name "*.c" -o -name "*.h" \) -exec clang-format -style=file -i {} +
+
 .PHONY: all run test clean cmake-build ctest check setup

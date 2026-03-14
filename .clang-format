@@ -1,0 +1,17 @@
+---
+Language: C
+IndentWidth: 8
+TabWidth: 8
+UseTab: Always
+BreakBeforeBraces: Custom
+BraceWrapping:
+  AfterFunction: true
+  AfterControlStatement: false
+  AfterStruct: false
+  AfterEnum: false
+  AfterUnion: false
+  BeforeElse: false
+AllowShortIfStatementsOnASingleLine: false
+IndentCaseLabels: false
+ColumnLimit: 100
+...

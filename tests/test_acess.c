@@ -1,98 +1,104 @@
 #include "test_helpers.h"
 
-static void test_vector_get() {
-  Vector v;
-  ASSERT_OK(vector_init(&v, 1, sizeof(char)));
+static void test_vector_get()
+{
+	Vector v;
+	ASSERT_OK(vector_init(&v, 1, sizeof(char)));
 
-  ASSERT_OK(VECTOR_PUSH(&v, char, 'a'));
+	ASSERT_OK(VECTOR_PUSH(&v, char, 'a'));
 
-  char get_char;
-  ASSERT_OK(VECTOR_GET(&v, char, 0, &get_char));
+	char get_char;
+	ASSERT_OK(VECTOR_GET(&v, char, 0, &get_char));
 
-  ASSERT_OK(VECTOR_PUSH(&v, char, 's'));
-  ASSERT_OK(VECTOR_PUSH(&v, char, 'd'));
+	ASSERT_OK(VECTOR_PUSH(&v, char, 's'));
+	ASSERT_OK(VECTOR_PUSH(&v, char, 'd'));
 
-  assert(v.size == 3);
-  
-  assert(vector_at(&v, 0) != NULL);
-  assert(get_char == VECTOR_AT(&v, char, 0));
+	assert(v.size == 3);
 
-  assert(VECTOR_AT(&v, char, 1) == 's');
-  assert(VECTOR_AT(&v, char, 2) == 'd');
-  
-  ASSERT_OK(vector_free(&v));
+	assert(vector_at(&v, 0) != NULL);
+	assert(get_char == VECTOR_AT(&v, char, 0));
+
+	assert(VECTOR_AT(&v, char, 1) == 's');
+	assert(VECTOR_AT(&v, char, 2) == 'd');
+
+	ASSERT_OK(vector_free(&v));
 }
 
-static void test_begin() {
-  Vector v;
-  setup_int(&v);
+static void test_begin()
+{
+	Vector v;
+	setup_int(&v);
 
-  void* ptr = vector_begin(&v);
-  assert(ptr != NULL);
-  
-  int begin = *(int*)ptr;
+	void *ptr = vector_begin(&v);
+	assert(ptr != NULL);
 
-  assert(v.size == 3);
-  assert(begin == 10);
+	int begin = *(int *)ptr;
 
-  ASSERT_OK(vector_free(&v));
+	assert(v.size == 3);
+	assert(begin == 10);
+
+	ASSERT_OK(vector_free(&v));
 }
 
-static void test_end() {
-  Vector v;
-  ASSERT_OK(vector_init(&v, 1, sizeof(char)));
+static void test_end()
+{
+	Vector v;
+	ASSERT_OK(vector_init(&v, 1, sizeof(char)));
 
-  assert(vector_begin(&v) == vector_end(&v));
+	assert(vector_begin(&v) == vector_end(&v));
 
-  ASSERT_OK(VECTOR_PUSH(&v, char, 'a'));
-  ASSERT_OK(VECTOR_PUSH(&v, char, 'b'));
-  ASSERT_OK(VECTOR_PUSH(&v, char, 'c'));
+	ASSERT_OK(VECTOR_PUSH(&v, char, 'a'));
+	ASSERT_OK(VECTOR_PUSH(&v, char, 'b'));
+	ASSERT_OK(VECTOR_PUSH(&v, char, 'c'));
 
-  char* begin = (char*)vector_begin(&v);
-  char* end = (char*)vector_end(&v);
+	char *begin = (char *)vector_begin(&v);
+	char *end = (char *)vector_end(&v);
 
-  size_t expected_distance_in_bytes = v.size * v.element_size;
+	size_t expected_distance_in_bytes = v.size * v.element_size;
 
-  assert((size_t)(end - begin) == expected_distance_in_bytes);
+	assert((size_t)(end - begin) == expected_distance_in_bytes);
 
-  char* expected_end_address = (char*)v.data + (v.size * v.element_size);
-  assert(end == expected_end_address);
+	char *expected_end_address = (char *)v.data + (v.size * v.element_size);
+	assert(end == expected_end_address);
 
-  ASSERT_OK(vector_free(&v));
+	ASSERT_OK(vector_free(&v));
 }
 
-static void test_find() {
-  Vector v;
-  setup_int(&v);
+static void test_find()
+{
+	Vector v;
+	setup_int(&v);
 
-  int* src = VECTOR_FIND(&v, int, 20, compare_int);
+	int *src = VECTOR_FIND(&v, int, 20, compare_int);
 
-  assert(src != NULL);
-  assert(*src == 20);
-  assert((void*)src == vector_at(&v, 1));
+	assert(src != NULL);
+	assert(*src == 20);
+	assert((void *)src == vector_at(&v, 1));
 
-  assert(VECTOR_FIND(&v, int, 99, compare_int) == NULL);
+	assert(VECTOR_FIND(&v, int, 99, compare_int) == NULL);
 
-  ASSERT_OK(vector_free(&v));
+	ASSERT_OK(vector_free(&v));
 }
 
-static void test_foreach() {
-  Vector v;
-  setup_int(&v);
+static void test_foreach()
+{
+	Vector v;
+	setup_int(&v);
 
-  ASSERT_OK(vector_foreach(&v, double_value));
+	ASSERT_OK(vector_foreach(&v, double_value));
 
-  assert_int(&v, 0, 20);
-  assert_int(&v, 1, 40);
-  assert_int(&v, 2, 60);
+	assert_int(&v, 0, 20);
+	assert_int(&v, 1, 40);
+	assert_int(&v, 2, 60);
 
-  ASSERT_OK(vector_free(&v));
+	ASSERT_OK(vector_free(&v));
 }
 
-void run_access_tests() {
-  test_vector_get();
-  test_begin();
-  test_end();
-  test_find();
-  test_foreach();
+void run_access_tests()
+{
+	test_vector_get();
+	test_begin();
+	test_end();
+	test_find();
+	test_foreach();
 }
