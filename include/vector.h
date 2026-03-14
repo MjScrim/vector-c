@@ -52,10 +52,12 @@ VectorStatus vector_remove_range(struct Vector*v , size_t start_index, size_t co
 VectorStatus vector_pop(struct Vector* v);
 VectorStatus vector_set(struct Vector* v, size_t index, void* value);
 VectorStatus vector_clear(struct Vector* v);
+
 /* =========================
    Utils
    ========================= */
 VectorStatus vector_print(struct Vector* v, void (*print_fn)(void*));
+VectorStatus vector_clone(struct Vector* dest, struct Vector* src);
 
 /* =========================
    TYPE-SAFE MACROS (Generics via C99)

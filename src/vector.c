@@ -267,7 +267,7 @@ VectorStatus vector_pop(struct Vector* v) {
   return vector_shrink_if_needed(v);
 }
 
-VectorStatus vector_set(struct Vector *v, size_t index, void *value) {
+VectorStatus vector_set(struct Vector* v, size_t index, void* value) {
   if (!v) return VECTOR_ERR_NULL_PTR;
 
   if (index >= v->size) return VECTOR_ERR_OUT_OF_BOUNDS;
@@ -298,6 +298,28 @@ VectorStatus vector_print(struct Vector* v, void (*print_fn)(void*)) {
   printf("\n");
 
   return status;
+}
+
+VectorStatus vector_clone(struct Vector* dest, struct Vector* src) {
+  if (!dest || !src) return VECTOR_ERR_NULL_PTR;
+
+  if (src->element_size == 0 || src->capacity == 0) {
+    return VECTOR_ERR_OUT_OF_BOUNDS;
+  }
+
+  VectorStatus status = vector_init(dest, src->capacity, src->element_size);
+  if (status != VECTOR_SUCCESS) {
+    return status;
+  }
+
+  if (src->size > 0) {
+    size_t bytes_to_copy = src->size * src->element_size;
+    memcpy(dest->data, src->data, bytes_to_copy);
+
+    dest->size = src->size;
+  }
+
+  return VECTOR_SUCCESS;
 }
 
 /* ==========================================================================
