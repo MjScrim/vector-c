@@ -115,6 +115,24 @@ static void test_clear()
 	ASSERT_OK(vector_free(&v));
 }
 
+static void test_sort() 
+{
+	Vector v;
+	ASSERT_OK(vector_init(&v, 1, sizeof(int)));
+
+	ASSERT_OK(VECTOR_PUSH(&v, int, 3));
+	ASSERT_OK(VECTOR_PUSH(&v, int, 2));
+	ASSERT_OK(VECTOR_PUSH(&v, int, 1));
+
+	ASSERT_OK(vector_sort(&v, compare_ints));
+
+	assert_int(&v, 0, 1);
+	assert_int(&v, 1, 2);
+	assert_int(&v, 2, 3);
+
+	ASSERT_OK(vector_free(&v));
+}
+
 void run_modifiers_tests()
 {
 	test_push();
@@ -125,4 +143,5 @@ void run_modifiers_tests()
 	test_pop();
 	test_set();
 	test_clear();
+	test_sort();
 }

@@ -18,6 +18,7 @@ void assert_int(Vector *v, size_t index, int expected);
 void assert_char(Vector *v, size_t index, char expected);
 bool compare_int(void *element, void *target);
 bool compare_char(void *element, void *target);
+int compare_ints(const void *a, const void *b);
 void double_value(void *n);
 
 void run_capacity_tests();

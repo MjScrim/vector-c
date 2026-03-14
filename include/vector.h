@@ -69,6 +69,7 @@ VectorStatus vector_remove_range(struct Vector *v, size_t start_index, size_t co
 VectorStatus vector_pop(struct Vector *v);
 VectorStatus vector_set(struct Vector *v, size_t index, void *value);
 VectorStatus vector_clear(struct Vector *v);
+VectorStatus vector_sort(struct Vector *v, int (*compare)(const void *, const void *));
 
 /* =========================
    Utils

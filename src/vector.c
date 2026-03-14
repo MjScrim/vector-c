@@ -414,6 +414,31 @@ VectorStatus vector_remove_range(struct Vector *v, size_t start_index, size_t co
 }
 
 /**
+ * vector_sort() - Sorts the vector using the standard quicksort algorithm
+ * @v: pointer to the vector
+ * @compare: function pointer for element comparison
+ *
+ * Wrapper around the standard library qsort(). The comparison function
+ * must return an integer less than, equal to, or greater than zero if
+ * the first argument is considered to be respectively less than, equal to,
+ * or greater than the second.
+ *
+ * Return: VECTOR_SUCCESS or error code.
+ */
+VectorStatus vector_sort(struct Vector *v, int (*compare)(const void *, const void *))
+{
+	if (!v || !compare)
+		return VECTOR_ERR_NULL_PTR;
+
+	if (v->size <= 1)
+		return VECTOR_SUCCESS;
+
+	qsort(v->data, v->size, v->element_size, compare);
+
+	return VECTOR_SUCCESS;
+}
+
+/**
  * vector_pop() - Removes the last element of the vector
  * @v: pointer to the vector
  *
