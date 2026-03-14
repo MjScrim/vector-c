@@ -253,15 +253,7 @@ VectorStatus vector_foreach(struct Vector *v, void (*action)(void *))
 	if (!v)
 		return VECTOR_ERR_NULL_PTR;
 
-	char *it = vector_begin(v);
-	char *end = vector_end(v);
-
-	while (it != end) {
-		action(it);
-		it += v->element_size;
-	}
-
-	return VECTOR_SUCCESS;
+	return vector_foreach_range(v, 0, v->size, action);
 }
 
 /**
