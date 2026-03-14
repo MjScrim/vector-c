@@ -31,6 +31,7 @@ void assert_char(Vector *v, size_t index, char expected)
 }
 
 bool compare_int(void *element, void *target) { return *(int *)element == *(int *)target; }
+bool compare_char(void *element, void *target) { return *(char *)element == *(char *)target; }
 
 void double_value(void *n)
 {

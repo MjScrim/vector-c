@@ -1,4 +1,5 @@
 #include "test_helpers.h"
+#include "vector.h"
 
 static void test_vector_get()
 {
@@ -94,6 +95,23 @@ static void test_foreach()
 	ASSERT_OK(vector_free(&v));
 }
 
+static void test_foreach_range()
+{
+
+	Vector v;
+	setup_int(&v);
+
+	size_t start_index = 1;
+
+	ASSERT_OK(vector_foreach_range(&v, start_index, v.size, double_value));
+
+	assert_int(&v, 0, 10);
+	assert_int(&v, 1, 40);
+	assert_int(&v, 2, 60);
+
+	ASSERT_OK(vector_free(&v));
+}
+
 void run_access_tests()
 {
 	test_vector_get();
@@ -101,4 +119,5 @@ void run_access_tests()
 	test_end();
 	test_find();
 	test_foreach();
+	test_foreach_range();
 }

@@ -29,4 +29,27 @@ static void test_clone()
 	ASSERT_OK(vector_free(&clone));
 }
 
-void run_utils_tests() { test_clone(); }
+static void test_extend()
+{
+	Vector dest;
+	Vector src;
+	setup_char(&dest);
+	setup_char(&src);
+
+	size_t old_dest_size = dest.size;
+
+	ASSERT_OK(vector_extend(&dest, &src));
+
+	assert(dest.size == old_dest_size + src.size);
+
+	assert(vector_end(&dest) == vector_end(&dest));
+
+	ASSERT_OK(vector_free(&dest));
+	ASSERT_OK(vector_free(&dest));
+}
+
+void run_utils_tests() 
+{ 
+	test_clone(); 
+	test_extend();
+}

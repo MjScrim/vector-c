@@ -264,6 +264,37 @@ VectorStatus vector_foreach(struct Vector *v, void (*action)(void *))
 	return VECTOR_SUCCESS;
 }
 
+/**
+ * vector_foreach_range() - Executes a function on a specific range of elements
+ * @v: pointer to the vector
+ * @start_index: starting index (inclusive)
+ * @end_index: ending index (exclusive)
+ * @action: function pointer to be executed
+ *
+ * Return: VECTOR_SUCCESS or error code.
+ */
+VectorStatus vector_foreach_range(struct Vector *v, size_t start_index, size_t end_index, void (*action)(void *))
+{
+	if (!v || !action)
+		return VECTOR_ERR_NULL_PTR;
+
+	if (start_index >= v->size || end_index > v->size || start_index > end_index)
+		return VECTOR_ERR_OUT_OF_BOUNDS;
+
+	if (start_index == end_index)
+		return VECTOR_SUCCESS;
+
+	char *it = vector_ptr(v, start_index);
+	char *end_ptr = vector_ptr(v, end_index);
+
+	while (it < end_ptr) {
+		action(it);
+		it += v->element_size;
+	}
+
+	return VECTOR_SUCCESS;
+}
+
 /* ==========================================================================
  * MODIFIERS
  * ========================================================================== */
@@ -502,6 +533,43 @@ VectorStatus vector_clone(struct Vector *dest, struct Vector *src)
 
 		dest->size = src->size;
 	}
+
+	return VECTOR_SUCCESS;
+}
+
+
+/**
+ * vector_extend() - Copy vector to the end of another vector  
+ * @dest: pointer to vector structure
+ * @src: pointer to the source vector to copy from
+ *
+ * Return: VECTOR_SUCCESS or error code.
+ */
+VectorStatus vector_extend(struct Vector *dest, struct Vector *src) 
+{
+	if (!dest || !src)
+		return VECTOR_ERR_NULL_PTR;
+
+	if (src->size == 0)
+		return VECTOR_SUCCESS;
+
+	if (dest->element_size != src->element_size)
+		return VECTOR_ERR_OUT_OF_BOUNDS;
+
+	size_t required_capacity = dest->size + src->size;
+
+	if (required_capacity > dest->capacity) {
+		VectorStatus status = vector_reserve(dest, required_capacity);
+		if (status != VECTOR_SUCCESS)
+			return status;
+	}
+
+	void *insert_ptr = vector_ptr(dest, dest->size);
+	size_t bytes_to_copy = src->size * src->element_size;
+
+	memmove(insert_ptr, src, bytes_to_copy);
+
+	dest->size = required_capacity;
 
 	return VECTOR_SUCCESS;
 }

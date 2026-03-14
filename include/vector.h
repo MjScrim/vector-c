@@ -57,6 +57,7 @@ void *vector_begin(struct Vector *v);
 void *vector_end(struct Vector *v);
 void *vector_find(struct Vector *v, void *target, bool (*compare)(void *, void *));
 VectorStatus vector_foreach(struct Vector *v, void (*action)(void *));
+VectorStatus vector_foreach_range(struct Vector *v, size_t start_index, size_t end_index, void (*action)(void *));
 
 /* =========================
    Modifiers
@@ -74,6 +75,7 @@ VectorStatus vector_clear(struct Vector *v);
    ========================= */
 VectorStatus vector_print(struct Vector *v, void (*print_fn)(void *));
 VectorStatus vector_clone(struct Vector *dest, struct Vector *src);
+VectorStatus vector_extend(struct Vector *dest, struct Vector *src);
 
 /* =========================
    TYPE-SAFE MACROS (Generics via C99)
