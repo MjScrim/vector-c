@@ -127,9 +127,8 @@ VectorStatus vector_shrink_to_fit(struct Vector *v)
 
 	void *new_data = realloc(v->data, new_capacity_bytes);
 
-	if (new_data == NULL) {
+	if (new_data == NULL)
 		return VECTOR_ERR_ALLOC_FAILED;
-	}
 
 	v->data = new_data;
 	v->capacity = v->size;
