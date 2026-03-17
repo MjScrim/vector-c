@@ -30,26 +30,27 @@ bool search_number(void* a, void* b) {
 }
 
 int main() {
-  Vector v;
-  vector_init(&v, 2, sizeof(int));
+    __free Vector v;
+    VectorStatus status = vector_init(&v, 2, sizeof(int));
 
-  VECTOR_PUSH(&v, int, 10);
-  VECTOR_PUSH(&v, int, 20);
-  VECTOR_INSERT(&v, int, 99, 1);
-  VECTOR_SET(&v, int, 100, 0);
+    if (status != VECTOR_SUCCESS)
+        return 1;
 
-  for (size_t i = 0; i < v.size; i++) {
-    printf("v[%zu] = %d\n", i, VECTOR_AT(&v, int, i));
-  }
+    VECTOR_PUSH(&v, int, 10);
+    VECTOR_PUSH(&v, int, 20);
+    VECTOR_INSERT(&v, int, 99, 1);
+    VECTOR_SET(&v, int, 100, 0);
 
-  int* target = VECTOR_FIND(&v, int, 100, search_number);
-  if(target) {
-    printf("%d\n", *target);
-  }
+    for (size_t i = 0; i < v.size; i++) {
+        printf("v[%zu] = %d\n", i, VECTOR_AT(&v, int, i));
+    }
 
-  vector_free(&v);
+    int* target = VECTOR_FIND(&v, int, 100, search_number);
+    if(target) {
+        printf("%d\n", *target);
+    }
 
-  return 0;
+    return 0;
 }
 ```
 
