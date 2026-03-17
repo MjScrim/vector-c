@@ -44,7 +44,7 @@ static void test_extend()
 
 	assert(vector_end(&dest) == vector_end(&dest));
 
-	ASSERT_OK(vector_free(&dest));
+	ASSERT_OK(vector_free(&src));
 	ASSERT_OK(vector_free(&dest));
 }
 

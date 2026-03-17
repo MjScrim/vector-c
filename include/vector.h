@@ -6,6 +6,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#define __check __attribute__((__warn_unused_result__))
+#define __free __attribute__((cleanup(_internal_vector_cleanup)))
+
 /**
  * struct Vector - Dynamic array container
  * @data: Pointer to the raw memory buffer
@@ -39,13 +42,13 @@ typedef enum {
    ========================= */
 
 /* See implementation in vector.c for full documentation */
-VectorStatus vector_init(struct Vector *v, size_t capacity, size_t element_size);
+__check VectorStatus vector_init(struct Vector *v, size_t capacity, size_t element_size);
 VectorStatus vector_free(struct Vector *v);
 
 /* =========================
    capacity
    ========================= */
-VectorStatus vector_reserve(struct Vector *v, size_t new_capacity);
+__check VectorStatus vector_reserve(struct Vector *v, size_t new_capacity);
 VectorStatus vector_shrink_to_fit(struct Vector *v);
 
 /* =========================
@@ -77,8 +80,25 @@ VectorStatus vector_sort(struct Vector *v, int (*compare)(const void *, const vo
    Utils
    ========================= */
 VectorStatus vector_print(struct Vector *v, void (*print_fn)(void *));
-VectorStatus vector_clone(struct Vector *dest, struct Vector *src);
+__check VectorStatus vector_clone(struct Vector *dest, struct Vector *src);
 VectorStatus vector_extend(struct Vector *dest, struct Vector *src);
+
+
+/* =========================
+   AUTO CLEANUP (RAII emulation)
+   ========================= */
+
+/**
+ * _internal_vector_cleanup() - Helper helper for the attribute cleanup
+ * @v: Double pointer passed automatically by the compiler.
+ * * Note It must be 'static inline' to avoid causing an error of
+ * "multiple definitions" if this .h file is included in multiple .c files.
+ */
+static inline void _internal_vector_cleanup(Vector *v)
+{
+	if (v && v->data)
+		vector_free(v);
+}
 
 /* =========================
    TYPE-SAFE MACROS (Generics via C99)
